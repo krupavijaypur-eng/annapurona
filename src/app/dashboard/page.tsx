@@ -5,10 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ExpiringSoon } from '@/components/dashboard/expiring-soon';
 import { QuickAdd } from '@/components/dashboard/quick-add';
 import { RecipeSuggestionsCta } from '@/components/dashboard/recipe-suggestions-cta';
-import { ShoppingListSummary } from '@/components/dashboard/shopping-list-summary';
 
 export default function DashboardPage() {
   return (
@@ -17,19 +15,18 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle>Welcome to Annapourna!</CardTitle>
           <CardDescription>
-            Your smart kitchen assistant. Here&apos;s a quick overview of your inventory.
+            Your smart kitchen assistant.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ExpiringSoon />
+            <p>This is your smart kitchen assistant. Use the navigation to explore your inventory, recipes, and more.</p>
         </CardContent>
       </Card>
       
       <QuickAdd />
 
-      <div className="grid gap-6 lg:col-span-3 md:grid-cols-2">
+      <div className="lg:col-span-3">
         <RecipeSuggestionsCta />
-        <ShoppingListSummary />
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ export type InventoryItem = {
   name: string;
   quantity: number;
   storage: StorageLocation;
-  expiryDate: Date;
   imageUrl?: string;
 };
 

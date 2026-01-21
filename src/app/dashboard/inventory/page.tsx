@@ -2,7 +2,6 @@ import { mockInventory } from '@/lib/data';
 import { InventoryItem } from '@/lib/types';
 import { columns } from './columns';
 import { DataTable } from './data-table';
-import { AddItemSheet } from './add-item-sheet';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 async function getInventory(): Promise<InventoryItem[]> {
@@ -21,7 +20,6 @@ export default async function InventoryPage() {
             <CardTitle>Inventory</CardTitle>
             <CardDescription>Manage your fridge, freezer, and pantry items.</CardDescription>
           </div>
-          <AddItemSheet />
         </div>
       </CardHeader>
       <CardContent>

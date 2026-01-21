@@ -1,8 +1,8 @@
 'use server';
 /**
- * @fileOverview Recipe suggestion flow based on available ingredients and their expiry dates.
+ * @fileOverview Recipe suggestion flow based on available ingredients.
  *
- * - suggestRecipes - A function that suggests recipes based on available ingredients and their expiry dates.
+ * - suggestRecipes - A function that suggests recipes based on available ingredients.
  * - RecipeSuggestionsInput - The input type for the suggestRecipes function.
  * - RecipeSuggestionsOutput - The return type for the suggestRecipes function.
  */
@@ -15,10 +15,9 @@ const RecipeSuggestionsInputSchema = z.object({
     .array(
       z.object({
         name: z.string().describe('The name of the ingredient.'),
-        expiryDate: z.string().describe('The expiry date of the ingredient (YYYY-MM-DD).'),
       })
     )
-    .describe('A list of available ingredients and their expiry dates.'),
+    .describe('A list of available ingredients.'),
 });
 export type RecipeSuggestionsInput = z.infer<typeof RecipeSuggestionsInputSchema>;
 
@@ -43,12 +42,11 @@ const prompt = ai.definePrompt({
   name: 'recipeSuggestionsPrompt',
   input: {schema: RecipeSuggestionsInputSchema},
   output: {schema: RecipeSuggestionsOutputSchema},
-  prompt: `You are a recipe suggestion AI assistant. You will suggest recipes based on the available ingredients and their expiry dates.
-Prioritize using ingredients that are expiring soon to minimize food waste.
+  prompt: `You are a recipe suggestion AI assistant. You will suggest recipes based on the available ingredients.
 
 Available Ingredients:
 {{#each ingredients}}
-- {{name}} (Expiry: {{expiryDate}})
+- {{name}}
 {{/each}}
 
 Suggest recipes that can be made with these ingredients. Provide the recipe name, a list of ingredients required, and the instructions to prepare the recipe.

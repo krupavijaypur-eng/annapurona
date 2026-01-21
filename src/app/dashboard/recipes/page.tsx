@@ -18,7 +18,6 @@ import { mockInventory } from '@/lib/data';
 import { suggestRecipes } from '@/ai/flows/recipe-suggestions-based-on-expiry';
 import type { Recipe } from '@/lib/types';
 import { ChefHat, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -33,7 +32,6 @@ export default function RecipesPage() {
     try {
       const ingredients = mockInventory.map(item => ({
         name: item.name,
-        expiryDate: format(item.expiryDate, 'yyyy-MM-dd'),
       }));
 
       const result = await suggestRecipes({ ingredients });
@@ -52,7 +50,7 @@ export default function RecipesPage() {
         <CardHeader>
           <CardTitle>Recipe Suggestions</CardTitle>
           <CardDescription>
-            Get recipe ideas based on your current inventory. The AI will prioritize items that are expiring soon.
+            Get recipe ideas based on your current inventory.
           </CardDescription>
         </CardHeader>
         <CardContent>

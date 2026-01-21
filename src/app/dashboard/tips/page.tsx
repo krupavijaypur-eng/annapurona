@@ -26,7 +26,6 @@ export default function TipsPage() {
       // In a real app, this data would be dynamically generated based on user activity.
       const mockInput = {
         consumptionPatterns: 'User often buys fresh vegetables like spinach and tomatoes but sometimes they expire before use. Milk is also occasionally wasted.',
-        expiryData: 'Items expiring most frequently are leafy greens (within 3-5 days) and dairy products (within 1 week).',
       };
 
       const result = await getPersonalizedFoodWasteTips(mockInput);
