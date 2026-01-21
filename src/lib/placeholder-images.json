@@ -41,12 +41,6 @@
       "description": "Raw chicken breasts.",
       "imageUrl": "https://images.unsplash.com/photo-1624364543842-b0472614eb68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyYXclMjBjaGlja2VufGVufDB8fHx8MTc2OTAxODAwMXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "raw chicken"
-    },
-    {
-      "id": "user-avatar",
-      "description": "Placeholder for user avatar.",
-      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3Njg5ODY5MDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "person portrait"
     }
   ]
 }
