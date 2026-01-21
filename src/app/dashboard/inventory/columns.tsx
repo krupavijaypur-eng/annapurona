@@ -26,7 +26,7 @@ function ExpiryCell({ date }: { date: Date }) {
   if (!isClient) {
     return (
       <div className="flex flex-col gap-y-1">
-        <span>{format(date, "MMM dd, yyyy")}</span>
+        <Skeleton className="h-4 w-24" />
         <Skeleton className="h-5 w-16 rounded-full" />
       </div>
     )
