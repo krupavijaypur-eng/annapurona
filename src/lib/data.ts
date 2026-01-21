@@ -1,55 +1,58 @@
 import type { InventoryItem, ShoppingListItem } from '@/lib/types';
 import { add } from 'date-fns';
 
+// Using a fixed date to ensure consistency between server and client renders
+const consistentDate = new Date('2024-07-20T12:00:00.000Z');
+
 export const mockInventory: InventoryItem[] = [
   {
     id: '1',
     name: 'Fresh Milk',
     quantity: 1,
     storage: 'fridge',
-    expiryDate: add(new Date(), { days: 2 }),
+    expiryDate: add(consistentDate, { days: 2 }),
   },
   {
     id: '2',
     name: 'Whole Wheat Bread',
     quantity: 1,
     storage: 'pantry',
-    expiryDate: add(new Date(), { days: 4 }),
+    expiryDate: add(consistentDate, { days: 4 }),
   },
   {
     id: '3',
     name: 'Chicken Breast',
     quantity: 2,
     storage: 'freezer',
-    expiryDate: add(new Date(), { months: 2 }),
+    expiryDate: add(consistentDate, { months: 2 }),
   },
   {
     id: '4',
     name: 'Tomatoes',
     quantity: 5,
     storage: 'fridge',
-    expiryDate: add(new Date(), { days: 6 }),
+    expiryDate: add(consistentDate, { days: 6 }),
   },
   {
     id: '5',
     name: 'Spinach',
     quantity: 1,
     storage: 'fridge',
-    expiryDate: add(new Date(), { days: 1 }),
+    expiryDate: add(consistentDate, { days: 1 }),
   },
   {
     id: '6',
     name: 'Cheddar Cheese',
     quantity: 1,
     storage: 'fridge',
-    expiryDate: add(new Date(), { weeks: 3 }),
+    expiryDate: add(consistentDate, { weeks: 3 }),
   },
     {
     id: '7',
     name: 'Onions',
     quantity: 3,
     storage: 'pantry',
-    expiryDate: add(new Date(), { weeks: 4 }),
+    expiryDate: add(consistentDate, { weeks: 4 }),
   },
 ];
 
