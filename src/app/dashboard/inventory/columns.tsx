@@ -23,7 +23,7 @@ function ExpiryCell({ date }: { date: Date }) {
     setIsClient(true)
   }, [])
 
-  if (!isClient) {
+  if (!isClient || isNaN(date.getTime())) {
     return (
       <div className="flex flex-col gap-y-1">
         <Skeleton className="h-4 w-24" />
@@ -82,7 +82,7 @@ export const columns: ColumnDef<InventoryItem>[] = [
     accessorKey: "expiryDate",
     header: "Expires",
     cell: ({ row }) => {
-      const date = row.getValue("expiryDate") as Date;
+      const date = new Date(row.getValue("expiryDate") as string);
       return <ExpiryCell date={date} />
     },
   },
