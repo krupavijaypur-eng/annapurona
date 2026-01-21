@@ -51,8 +51,10 @@ export default function DashboardLayout({
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton asChild tooltip={item.label}>
                     <Link href={item.href}>
-                      <item.icon />
-                      <span>{item.label}</span>
+                      <>
+                        <item.icon />
+                        <span>{item.label}</span>
+                      </>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -64,8 +66,10 @@ export default function DashboardLayout({
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Profile">
                   <Link href="/dashboard/profile">
-                    <UserCircle />
-                    <span>Profile</span>
+                    <>
+                      <UserCircle />
+                      <span>Profile</span>
+                    </>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
