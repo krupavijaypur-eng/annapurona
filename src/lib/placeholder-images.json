@@ -13,34 +13,46 @@
       "imageHint": "plated food"
     },
     {
-      "id": "item-apple",
-      "description": "A crisp red apple.",
-      "imageUrl": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhcHBsZXxlbnwwfHx8fDE3Njg5OTc1MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "apple"
-    },
-    {
-      "id": "item-banana",
-      "description": "A bunch of ripe bananas.",
-      "imageUrl": "https://images.unsplash.com/photo-1603833665858-e61d17a86224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxiYW5hbmF8ZW58MHx8fHwxNzY5MDE4MDAyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "banana"
-    },
-    {
       "id": "item-milk",
       "description": "A carton of milk.",
-      "imageUrl": "https://images.unsplash.com/photo-1734104739790-855195038d93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtaWxrJTIwY2FydG9ufGVufDB8fHx8MTc2ODkyOTkyOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1610462372926-391a31dd04cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtaWxrJTIwY2FydG9ufGVufDB8fHx8MTc2ODkyOTkyOHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "milk carton"
     },
     {
       "id": "item-bread",
       "description": "A loaf of bread.",
-      "imageUrl": "https://images.unsplash.com/photo-1549413468-cd78edb7e75c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxicmVhZHxlbnwwfHx8fDE3NjkwMTgwMDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxicmVhZHxlbnwwfHx8fDE3NjkwMTgwMDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "bread"
     },
     {
       "id": "item-chicken",
       "description": "Raw chicken breasts.",
-      "imageUrl": "https://images.unsplash.com/photo-1624364543842-b0472614eb68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyYXclMjBjaGlja2VufGVufDB8fHx8MTc2OTAxODAwMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1642102903996-cdad15f5dcdd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyYXclMjBjaGlja2VufGVufDB8fHx8MTc2OTAxODAwMXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "raw chicken"
+    },
+    {
+      "id": "item-tomatoes",
+      "description": "A few ripe tomatoes.",
+      "imageUrl": "https://images.unsplash.com/photo-1562447575-88db38dcc649?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8dG9tYXRvZXN8ZW58MHx8fHwxNzY5MDE2NTM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tomatoes"
+    },
+    {
+      "id": "item-spinach",
+      "description": "A bunch of fresh spinach.",
+      "imageUrl": "https://images.unsplash.com/photo-1616169775818-9f7115b8821e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzcGluYWNofGVufDB8fHx8MTc2ODk3ODI1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "spinach"
+    },
+    {
+      "id": "item-cheese",
+      "description": "A block of cheddar cheese.",
+      "imageUrl": "https://images.unsplash.com/photo-1627935722051-395636b0d8a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjaGVlc2V8ZW58MHx8fHwxNzY4OTU4MDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cheese"
+    },
+    {
+      "id": "item-onions",
+      "description": "A couple of onions.",
+      "imageUrl": "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxvbmlvbnN8ZW58MHx8fHwxNzY5MDE2NTM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "onions"
     }
   ]
 }
