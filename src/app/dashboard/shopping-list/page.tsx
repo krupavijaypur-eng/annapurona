@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -16,8 +16,12 @@ import { Plus, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 export default function ShoppingListPage() {
-  const [list, setList] = useState<ShoppingListItem[]>(mockShoppingList);
+  const [list, setList] = useState<ShoppingListItem[]>([]);
   const [newItemName, setNewItemName] = useState('');
+
+  useEffect(() => {
+    setList(mockShoppingList);
+  }, []);
 
   const handleToggleItem = (id: string) => {
     setList(
