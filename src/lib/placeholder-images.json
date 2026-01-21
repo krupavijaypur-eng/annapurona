@@ -9,25 +9,25 @@
     {
       "id": "recipe-placeholder",
       "description": "A beautifully plated dish.",
-      "imageUrl": "https://images.unsplash.com/photo-1763376360111-3597e5877517?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGxhdGVkJTIwZm9vZHxlbnwwfHx8fDE3Njg5MTA5NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1631021967255-898a52176fea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwbGF0ZWQlMjBmb29kfGVufDB8fHx8MTc2ODkxMDk0Mnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "plated food"
     },
     {
       "id": "item-apple",
       "description": "A crisp red apple.",
-      "imageUrl": "https://images.unsplash.com/photo-1589217157232-464b505b197f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhcHBsZXxlbnwwfHx8fDE3Njg5OTc1MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1576179635662-9d1983e97e1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhcHBsZXxlbnwwfHx8fDE3Njg5OTc1MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "apple"
     },
     {
       "id": "item-banana",
       "description": "A bunch of ripe bananas.",
-      "imageUrl": "https://images.unsplash.com/photo-1603833665858-e61d17a86224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxiYW5hbmF8ZW58MHx8fHwxNzY5MDE4MDAyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1481349518771-20055b2a7b24?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxiYW5hbmF8ZW58MHx8fHwxNzY5MDE4MDAyfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "banana"
     },
     {
       "id": "item-milk",
       "description": "A carton of milk.",
-      "imageUrl": "https://images.unsplash.com/photo-1761064490619-0aea9d301d6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bWlsayUyMGNhcnRvbnxlbnwwfHx8fDE3Njg5Mjk5Mjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1576186726115-4d51596775d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtaWxrJTIwY2FydG9ufGVufDB8fHx8MTc2ODkyOTkyOHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "milk carton"
     },
     {
@@ -39,13 +39,13 @@
     {
       "id": "item-chicken",
       "description": "Raw chicken breasts.",
-      "imageUrl": "https://images.unsplash.com/photo-1672787153655-0c19308dcc60?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxyYXclMjBjaGlja2VufGVufDB8fHx8MTc2OTAxODAwMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1624364543842-b0472614eb68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyYXclMjBjaGlja2VufGVufDB8fHx8MTc2OTAxODAwMXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "raw chicken"
     },
     {
       "id": "user-avatar",
       "description": "Placeholder for user avatar.",
-      "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3Njg5ODY5MDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3Njg5ODY5MDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "person portrait"
     }
   ]

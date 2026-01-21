@@ -17,8 +17,7 @@ function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' 
 type ExpiringItem = InventoryItem & { daysLeft: number };
 
 export function ExpiringSoon() {
-  const [expiringSoon, setExpiringSoon] = useState<ExpiringItem[]>([]);
-  const [isClient, setIsClient] = useState(false);
+  const [expiringSoon, setExpiringSoon] = useState<ExpiringItem[] | null>(null);
 
   useEffect(() => {
     // This effect runs only on the client, after the component has mounted.
@@ -31,11 +30,9 @@ export function ExpiringSoon() {
       .sort((a, b) => a.daysLeft - b.daysLeft)
       .slice(0, 5);
     setExpiringSoon(expiring);
-    setIsClient(true);
   }, []);
 
-  // On the server and for the initial client render, show a skeleton.
-  if (!isClient) {
+  if (expiringSoon === null) {
     return (
       <div className="space-y-4">
         <h3 className="flex items-center gap-2 text-lg font-semibold">
@@ -56,7 +53,6 @@ export function ExpiringSoon() {
     );
   }
 
-  // After client-side hydration, render the actual content.
   return (
     <div className="space-y-4">
       <h3 className="flex items-center gap-2 text-lg font-semibold">
