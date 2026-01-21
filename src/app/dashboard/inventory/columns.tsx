@@ -17,42 +17,43 @@ const storageIcons: Record<StorageLocation, React.ReactNode> = {
 }
 
 function ExpiryCell({ date }: { date: Date }) {
-  const [isClient, setIsClient] = React.useState(false)
+  const [content, setContent] = React.useState<React.ReactNode>(
+    <div className="flex flex-col gap-y-1">
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-5 w-16 rounded-full" />
+    </div>
+  );
 
   React.useEffect(() => {
-    setIsClient(true)
-  }, [])
+    if (isNaN(date.getTime())) {
+      // Keep skeleton if date is invalid
+      return;
+    }
 
-  if (!isClient || isNaN(date.getTime())) {
-    return (
-      <div className="flex flex-col gap-y-1">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-5 w-16 rounded-full" />
+    const daysLeft = differenceInDays(date, new Date());
+    let variant: 'destructive' | 'default' | 'secondary' = 'secondary';
+    let text = `${daysLeft} days left`;
+
+    if (daysLeft <= 0) {
+      variant = 'destructive';
+      text = 'Expired';
+    } else if (daysLeft <= 3) {
+      variant = 'destructive';
+      text = `${daysLeft}d left`;
+    } else if (daysLeft <= 7) {
+      variant = 'default';
+      text = `${daysLeft}d left`;
+    }
+  
+    setContent(
+      <div className="flex flex-col">
+        <span>{format(date, "MMM dd, yyyy")}</span>
+        <Badge variant={variant}>{text}</Badge>
       </div>
     )
-  }
+  }, [date]);
 
-  const daysLeft = differenceInDays(date, new Date());
-  let variant: 'destructive' | 'default' | 'secondary' = 'secondary';
-  let text = `${daysLeft} days left`;
-
-  if (daysLeft <= 0) {
-    variant = 'destructive';
-    text = 'Expired';
-  } else if (daysLeft <= 3) {
-    variant = 'destructive';
-    text = `${daysLeft}d left`;
-  } else if (daysLeft <= 7) {
-    variant = 'default';
-    text = `${daysLeft}d left`;
-  }
-  
-  return (
-    <div className="flex flex-col">
-      <span>{format(date, "MMM dd, yyyy")}</span>
-      <Badge variant={variant}>{text}</Badge>
-    </div>
-  )
+  return <>{content}</>;
 }
 
 export const columns: ColumnDef<InventoryItem>[] = [
