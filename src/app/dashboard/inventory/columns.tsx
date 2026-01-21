@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { InventoryItem, StorageLocation } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
@@ -7,6 +8,7 @@ import { format, differenceInDays } from "date-fns"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Refrigerator, Snowflake, Archive } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const storageIcons: Record<StorageLocation, React.ReactNode> = {
   fridge: <Refrigerator className="mr-2 h-4 w-4 text-blue-500" />,
@@ -14,7 +16,22 @@ const storageIcons: Record<StorageLocation, React.ReactNode> = {
   pantry: <Archive className="mr-2 h-4 w-4 text-amber-600" />,
 }
 
-function getExpiryBadge(date: Date): React.ReactNode {
+function ExpiryCell({ date }: { date: Date }) {
+  const [isClient, setIsClient] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return (
+      <div className="flex flex-col gap-y-1">
+        <span>{format(date, "MMM dd, yyyy")}</span>
+        <Skeleton className="h-5 w-16 rounded-full" />
+      </div>
+    )
+  }
+
   const daysLeft = differenceInDays(date, new Date());
   let variant: 'destructive' | 'default' | 'secondary' = 'secondary';
   let text = `${daysLeft} days left`;
@@ -30,7 +47,12 @@ function getExpiryBadge(date: Date): React.ReactNode {
     text = `${daysLeft}d left`;
   }
   
-  return <Badge variant={variant}>{text}</Badge>;
+  return (
+    <div className="flex flex-col">
+      <span>{format(date, "MMM dd, yyyy")}</span>
+      <Badge variant={variant}>{text}</Badge>
+    </div>
+  )
 }
 
 export const columns: ColumnDef<InventoryItem>[] = [
@@ -61,12 +83,7 @@ export const columns: ColumnDef<InventoryItem>[] = [
     header: "Expires",
     cell: ({ row }) => {
       const date = row.getValue("expiryDate") as Date;
-      return (
-        <div className="flex flex-col">
-          <span>{format(date, "MMM dd, yyyy")}</span>
-          {getExpiryBadge(date)}
-        </div>
-      )
+      return <ExpiryCell date={date} />
     },
   },
   {
