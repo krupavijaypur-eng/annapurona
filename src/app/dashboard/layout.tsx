@@ -17,7 +17,7 @@ import {
   Lightbulb,
   Refrigerator,
   ShoppingBasket,
-  UserCircle,
+  CircleUser,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { DashboardHeader } from '@/components/dashboard/header';
@@ -67,7 +67,7 @@ export default function DashboardLayout({
                 <SidebarMenuButton asChild tooltip="Profile">
                   <Link href="/dashboard/profile">
                     <>
-                      <UserCircle />
+                      <CircleUser />
                       <span>Profile</span>
                     </>
                   </Link>
