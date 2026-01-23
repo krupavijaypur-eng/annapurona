@@ -39,13 +39,11 @@ export default function LoginPage() {
       }
       router.push('/dashboard');
     } catch (err: any) {
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-        setError('No account found with this email. Please sign up instead.');
-        setActiveTab('signup');
+      if (err.code === 'auth/invalid-credential') {
+        setError('Invalid email or password. Please try again.');
       } else {
         setError('An error occurred during sign-in. Please try again.');
       }
-      console.error(err);
     }
   };
 
@@ -67,7 +65,6 @@ export default function LoginPage() {
       } else {
         setError('An error occurred during sign-up. Please try again.');
       }
-      console.error(err);
     }
   };
 
