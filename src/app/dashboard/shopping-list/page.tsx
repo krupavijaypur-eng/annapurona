@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,57 +10,33 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { mockShoppingList } from '@/lib/data';
-import type { ShoppingListItem } from '@/lib/types';
 import { Plus, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
+import { useAppContext } from '@/context/AppContext';
 
 export default function ShoppingListPage() {
-  const [list, setList] = useState<ShoppingListItem[] | null>(null);
+  const { shoppingList, addShoppingListItem, toggleShoppingListItem, clearCheckedShoppingListItems, isDataLoaded } = useAppContext();
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState(1);
   const [newItemUnit, setNewItemUnit] = useState('items');
 
-  useEffect(() => {
-    // Simulate fetching data to avoid hydration mismatch
-    setList(mockShoppingList);
-  }, []);
-
-  const handleToggleItem = (id: string) => {
-    if (!list) return;
-    setList(
-      list.map(item =>
-        item.id === id ? { ...item, checked: !item.checked } : item
-      )
-    );
-  };
-
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!list) return;
     if (newItemName.trim() && newItemQuantity > 0 && newItemUnit.trim()) {
-      const newItem: ShoppingListItem = {
-        id: new Date().toISOString(),
+      addShoppingListItem({
         name: newItemName.trim(),
         quantity: newItemQuantity,
         unit: newItemUnit.trim(),
-        checked: false,
-      };
-      setList([...list, newItem]);
+      });
       setNewItemName('');
       setNewItemQuantity(1);
       setNewItemUnit('items');
     }
   };
-
-  const handleRemoveChecked = () => {
-    if (!list) return;
-    setList(list.filter(item => !item.checked));
-  };
   
-  if (list === null) {
+  if (!isDataLoaded) {
       return (
         <Card>
           <CardHeader>
@@ -74,12 +50,16 @@ export default function ShoppingListPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-end gap-2 mb-6">
-                <div className="grid grid-cols-5 gap-2 w-full">
-                    <div className="col-span-3"><Skeleton className="h-10" /></div>
-                    <div className="col-span-1"><Skeleton className="h-10" /></div>
-                    <div className="col-span-1"><Skeleton className="h-10" /></div>
+                <div className="flex-grow">
+                    <Skeleton className="h-10" />
                 </div>
-                <Skeleton className="h-10 w-10" />
+                <div className="w-24">
+                   <Skeleton className="h-10" />
+                </div>
+                <div className="w-28">
+                   <Skeleton className="h-10" />
+                </div>
+                 <Skeleton className="h-10 w-10" />
             </div>
             <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -100,8 +80,8 @@ export default function ShoppingListPage() {
       )
   }
 
-  const checkedItems = list.filter(item => item.checked);
-  const uncheckedItems = list.filter(item => !item.checked);
+  const checkedItems = shoppingList.filter(item => item.checked);
+  const uncheckedItems = shoppingList.filter(item => !item.checked);
 
   return (
     <Card>
@@ -113,7 +93,7 @@ export default function ShoppingListPage() {
                 Manage your grocery needs. Add new items or check off what you've bought.
                 </CardDescription>
             </div>
-            <Button variant="outline" onClick={handleRemoveChecked} className="mt-4 sm:mt-0" disabled={checkedItems.length === 0}>
+            <Button variant="outline" onClick={clearCheckedShoppingListItems} className="mt-4 sm:mt-0" disabled={checkedItems.length === 0}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Clear Checked Items
             </Button>
@@ -163,7 +143,7 @@ export default function ShoppingListPage() {
                 <Checkbox
                     id={item.id}
                     checked={item.checked}
-                    onCheckedChange={() => handleToggleItem(item.id)}
+                    onCheckedChange={() => toggleShoppingListItem(item.id)}
                 />
                 <label
                     htmlFor={item.id}
@@ -187,7 +167,7 @@ export default function ShoppingListPage() {
                         <Checkbox
                             id={item.id}
                             checked={item.checked}
-                            onCheckedChange={() => handleToggleItem(item.id)}
+                            onCheckedChange={() => toggleShoppingListItem(item.id)}
                         />
                         <label
                             htmlFor={item.id}
@@ -202,7 +182,7 @@ export default function ShoppingListPage() {
                 </div>
             )}
 
-            {list.length === 0 && (
+            {shoppingList.length === 0 && (
                 <p className="text-center text-muted-foreground py-8">Your shopping list is empty.</p>
             )}
         </div>

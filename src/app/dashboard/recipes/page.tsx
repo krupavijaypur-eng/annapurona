@@ -14,12 +14,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { mockInventory } from '@/lib/data';
 import { suggestRecipes } from '@/ai/flows/recipe-suggestions-based-on-expiry';
 import type { Recipe } from '@/lib/types';
 import { ChefHat, Loader2 } from 'lucide-react';
+import { useAppContext } from '@/context/AppContext';
 
 export default function RecipesPage() {
+  const { inventory } = useAppContext();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,9 +31,15 @@ export default function RecipesPage() {
     setRecipes([]);
 
     try {
-      const ingredients = mockInventory.map(item => ({
+      const ingredients = inventory.map(item => ({
         name: item.name,
       }));
+
+      if (ingredients.length === 0) {
+        setError('Your inventory is empty. Add some items to get recipe suggestions.');
+        setIsLoading(false);
+        return;
+      }
 
       const result = await suggestRecipes({ ingredients });
       setRecipes(result.recipes);

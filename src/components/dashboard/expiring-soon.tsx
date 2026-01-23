@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { mockInventory } from '@/lib/data';
 import { differenceInDays, formatDistanceToNow } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
 import { type InventoryItem } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { useAppContext } from '@/context/AppContext';
 
 function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' {
   if (days <= 1) return 'destructive';
@@ -18,21 +18,23 @@ function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' 
 type ExpiringItem = InventoryItem & { daysLeft: number };
 
 export function ExpiringSoon() {
+  const { inventory, isDataLoaded } = useAppContext();
   const [expiringSoon, setExpiringSoon] = useState<ExpiringItem[] | null>(null);
 
   useEffect(() => {
-    // This effect runs only on the client, after the component has mounted.
-    const expiring = mockInventory
-      .filter((item): item is InventoryItem & { expiryDate: Date } => !!item.expiryDate)
-      .map((item) => ({
-        ...item,
-        daysLeft: differenceInDays(item.expiryDate, new Date()),
-      }))
-      .filter((item) => item.daysLeft <= 7)
-      .sort((a, b) => a.daysLeft - b.daysLeft)
-      .slice(0, 5);
-    setExpiringSoon(expiring);
-  }, []);
+    if (isDataLoaded) {
+        const expiring = inventory
+        .filter((item): item is InventoryItem & { expiryDate: Date } => !!item.expiryDate)
+        .map((item) => ({
+            ...item,
+            daysLeft: differenceInDays(item.expiryDate, new Date()),
+        }))
+        .filter((item) => item.daysLeft <= 7)
+        .sort((a, b) => a.daysLeft - b.daysLeft)
+        .slice(0, 5);
+        setExpiringSoon(expiring);
+    }
+  }, [inventory, isDataLoaded]);
 
   if (expiringSoon === null) {
     return (
@@ -77,7 +79,10 @@ export function ExpiringSoon() {
                     <div>
                         <p className="font-medium">{item.name}</p>
                         <p className="text-sm text-muted-foreground">
-                        Expires {formatDistanceToNow(item.expiryDate, { addSuffix: true })}
+                        {item.daysLeft < 0
+                            ? `Expired ${formatDistanceToNow(item.expiryDate, { addSuffix: true })}`
+                            : `Expires ${formatDistanceToNow(item.expiryDate, { addSuffix: true })}`
+                        }
                         </p>
                     </div>
                     <Badge variant={getBadgeVariant(item.daysLeft)}>

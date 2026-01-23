@@ -9,11 +9,12 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowRight, ShoppingBasket } from 'lucide-react';
-import { mockShoppingList } from '@/lib/data';
+import { useAppContext } from '@/context/AppContext';
 import { ScrollArea } from '../ui/scroll-area';
 
 export function ShoppingListSummary() {
-    const listToShow = mockShoppingList.slice(0, 5);
+    const { shoppingList } = useAppContext();
+    const listToShow = shoppingList.filter(item => !item.checked).slice(0, 5);
 
   return (
     <Card className="flex flex-col h-full">
@@ -31,14 +32,14 @@ export function ShoppingListSummary() {
             {listToShow.length > 0 ? <ul className="space-y-3 pr-4">
             {listToShow.map(item => (
                 <li key={item.id} className="flex items-center gap-3">
-                <Checkbox id={`summary-${item.id}`} checked={item.checked} />
+                <Checkbox id={`summary-${item.id}`} checked={item.checked} disabled />
                 <label
                     htmlFor={`summary-${item.id}`}
                     className={`flex-1 text-sm ${item.checked ? 'text-muted-foreground line-through' : ''}`}
                 >
                     {item.name}
                 </label>
-                 <span className="text-sm text-muted-foreground">Qty: {item.quantity}</span>
+                 <span className="text-sm text-muted-foreground">{`${item.quantity} ${item.unit}`}</span>
                 </li>
             ))}
             </ul> : 

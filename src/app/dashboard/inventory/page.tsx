@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { mockInventory } from '@/lib/data';
 import { InventoryItem, StorageLocation } from '@/lib/types';
 import { getColumns } from './columns';
 import { DataTable } from './data-table';
@@ -25,29 +24,14 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAppContext } from '@/context/AppContext';
 
 export default function InventoryPage() {
-  const [data, setData] = React.useState<InventoryItem[]>([]);
-  const [isClient, setIsClient] = React.useState(false);
+  const { inventory, addInventoryItem, deleteInventoryItem, isDataLoaded } = useAppContext();
 
-  React.useEffect(() => {
-    // Simulate fetching data
-    setData(mockInventory);
-    setIsClient(true);
-  }, []);
+  const columns = React.useMemo(() => getColumns(deleteInventoryItem), [deleteInventoryItem]);
 
-  const handleDeleteItem = (id: string) => {
-    setData(prevData => prevData.filter(item => item.id !== id));
-  };
-  
-  const handleAddItem = (newItem: Omit<InventoryItem, 'id' | 'imageUrl'>) => {
-    const newId = new Date().toISOString();
-    setData(prevData => [...prevData, { ...newItem, id: newId, imageUrl: `https://picsum.photos/seed/${newId}/100/100` }]);
-  };
-  
-  const columns = React.useMemo(() => getColumns(handleDeleteItem), []);
-
-  if (!isClient) {
+  if (!isDataLoaded) {
       return (
            <Card>
               <CardHeader>
@@ -74,11 +58,11 @@ export default function InventoryPage() {
             <CardTitle>Inventory</CardTitle>
             <CardDescription>Manage your fridge, freezer, and pantry items.</CardDescription>
           </div>
-          <AddItemSheet onAddItem={handleAddItem} />
+          <AddItemSheet onAddItem={addInventoryItem} />
         </div>
       </CardHeader>
       <CardContent>
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={inventory} />
       </CardContent>
     </Card>
   );

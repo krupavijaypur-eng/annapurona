@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { DashboardHeader } from '@/components/dashboard/header';
+import { AppProvider } from '@/context/AppContext';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -35,36 +36,38 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center gap-2">
-              <Logo className="size-8" />
-              <span className="text-lg font-semibold">Annapourna</span>
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild tooltip={item.label}>
-                    <Link href={item.href}>
-                      <>
-                        <item.icon />
-                        <span>{item.label}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarContent>
-        </Sidebar>
-        <SidebarInset>
-          <DashboardHeader />
-          <main className="flex-1 p-4 md:p-6">{children}</main>
-        </SidebarInset>
-      </div>
+      <AppProvider>
+        <div className="flex min-h-screen">
+          <Sidebar>
+            <SidebarHeader>
+              <div className="flex items-center gap-2">
+                <Logo className="size-8" />
+                <span className="text-lg font-semibold">Annapourna</span>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarMenu>
+                {navItems.map((item) => (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton asChild tooltip={item.label}>
+                      <Link href={item.href}>
+                        <>
+                          <item.icon />
+                          <span>{item.label}</span>
+                        </>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarContent>
+          </Sidebar>
+          <SidebarInset>
+            <DashboardHeader />
+            <main className="flex-1 p-4 md:p-6">{children}</main>
+          </SidebarInset>
+        </div>
+      </AppProvider>
     </SidebarProvider>
   );
 }
