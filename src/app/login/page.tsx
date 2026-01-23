@@ -23,6 +23,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('login');
 
   const onSignIn = async (provider: 'google' | 'email') => {
     setError(null);
@@ -30,23 +31,52 @@ export default function LoginPage() {
       if (provider === 'google') {
         await handleGoogleSignIn(auth);
       } else {
+        if (!email || !password) {
+            setError('Please enter both email and password.');
+            return;
+        }
         await handleEmailSignIn(auth, email, password);
       }
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message);
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+        setError('No account found with this email. Please sign up instead.');
+        setActiveTab('signup');
+      } else {
+        setError('An error occurred during sign-in. Please try again.');
+      }
+      console.error(err);
     }
   };
 
   const onSignUp = async () => {
     setError(null);
     try {
+        if (!email || !password) {
+            setError('Please enter both email and password.');
+            return;
+        }
       await handleEmailSignUp(auth, email, password);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message);
+      if (err.code === 'auth/email-already-in-use') {
+        setError('An account with this email already exists. Please log in instead.');
+        setActiveTab('login');
+      } else if (err.code === 'auth/weak-password') {
+        setError('The password is too weak. Please use at least 6 characters.');
+      } else {
+        setError('An error occurred during sign-up. Please try again.');
+      }
+      console.error(err);
     }
   };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setError(null); // Clear errors when switching tabs
+    setEmail('');
+    setPassword('');
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -54,7 +84,7 @@ export default function LoginPage() {
             <div className="flex justify-center mb-6">
                 <Logo className="size-12" />
             </div>
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Log In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
