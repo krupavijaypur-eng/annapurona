@@ -1,0 +1,22 @@
+{
+  "login.welcome": "Welcome Back",
+  "login.description": "Sign in to manage your kitchen inventory.",
+  "login.email": "Email",
+  "login.password": "Password",
+  "login.login": "Log In",
+  "login.google": "Sign In with Google",
+  "signup.title": "Create an Account",
+  "signup.description": "Get started with smart inventory management.",
+  "signup.signup": "Sign Up",
+  "signup.google": "Sign Up with Google",
+  "nav.dashboard": "Dashboard",
+  "nav.inventory": "Inventory",
+  "nav.recipes": "Recipes",
+  "nav.shopping-list": "Shopping List",
+  "nav.tips": "Tips",
+  "header.logout": "Log out",
+  "header.language": "Language",
+  "lang.en": "English",
+  "lang.hi": "हिन्दी (Hindi)",
+  "lang.kn": "ಕನ್ನಡ (Kannada)"
+}

@@ -24,13 +24,14 @@ import {
 import { Logo } from '@/components/logo';
 import { DashboardHeader } from '@/components/dashboard/header';
 import { useUser } from '@/firebase';
+import { useLanguage } from '@/context/LanguageContext';
 
 const navItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/dashboard/inventory', icon: Refrigerator, label: 'Inventory' },
-  { href: '/dashboard/recipes', icon: ChefHat, label: 'Recipes' },
-  { href: '/dashboard/shopping-list', icon: ShoppingBasket, label: 'Shopping List' },
-  { href: '/dashboard/tips', icon: Lightbulb, label: 'Tips' },
+  { href: '/dashboard', icon: LayoutDashboard, tKey: 'nav.dashboard' },
+  { href: '/dashboard/inventory', icon: Refrigerator, tKey: 'nav.inventory' },
+  { href: '/dashboard/recipes', icon: ChefHat, tKey: 'nav.recipes' },
+  { href: '/dashboard/shopping-list', icon: ShoppingBasket, tKey: 'nav.shopping-list' },
+  { href: '/dashboard/tips', icon: Lightbulb, tKey: 'nav.tips' },
 ];
 
 export default function DashboardLayout({
@@ -39,6 +40,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { user, isUserLoading } = useUser();
+  const { t } = useLanguage();
 
   if (isUserLoading) {
     return (
@@ -66,11 +68,11 @@ export default function DashboardLayout({
             <SidebarMenu>
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild tooltip={item.label}>
+                  <SidebarMenuButton asChild tooltip={t(item.tKey)}>
                     <Link href={item.href}>
                       <>
                         <item.icon />
-                        <span>{item.label}</span>
+                        <span>{t(item.tKey)}</span>
                       </>
                     </Link>
                   </SidebarMenuButton>

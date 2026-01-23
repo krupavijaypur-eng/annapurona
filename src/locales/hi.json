@@ -1,0 +1,22 @@
+{
+  "login.welcome": "वापसी पर स्वागत है",
+  "login.description": "अपनी रसोई की इन्वेंट्री प्रबंधित करने के लिए साइन इन करें।",
+  "login.email": "ईमेल",
+  "login.password": "पासवर्ड",
+  "login.login": "लॉग इन करें",
+  "login.google": "Google से साइन इन करें",
+  "signup.title": "खाता बनाएं",
+  "signup.description": "स्मार्ट इन्वेंट्री प्रबंधन के साथ शुरुआत करें।",
+  "signup.signup": "साइन अप करें",
+  "signup.google": "Google से साइन अप करें",
+  "nav.dashboard": "डैशबोर्ड",
+  "nav.inventory": "इन्वेंटरी",
+  "nav.recipes": "रेसिपी",
+  "nav.shopping-list": "खरीदारी की सूची",
+  "nav.tips": "सुझाव",
+  "header.logout": "लॉग आउट करें",
+  "header.language": "भाषा",
+  "lang.en": "English",
+  "lang.hi": "हिन्दी (Hindi)",
+  "lang.kn": "ಕನ್ನಡ (Kannada)"
+}

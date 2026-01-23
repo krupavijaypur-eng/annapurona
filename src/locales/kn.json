@@ -1,0 +1,22 @@
+{
+  "login.welcome": "ಮರಳಿ ಸ್ವಾಗತ",
+  "login.description": "ನಿಮ್ಮ ಅಡಿಗೆ ದಾಸ್ತಾನು ನಿರ್ವಹಿಸಲು ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "login.email": "ಇಮೇಲ್",
+  "login.password": "ಪಾಸ್ವರ್ಡ್",
+  "login.login": "ಲಾಗಿನ್ ಮಾಡಿ",
+  "login.google": "Google ನೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ",
+  "signup.title": "ಖಾತೆಯನ್ನು ತೆರೆಯಿರಿ",
+  "signup.description": "ಸ್ಮಾರ್ಟ್ ಇನ್ವೆಂಟರಿ ನಿರ್ವಹಣೆಯೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ.",
+  "signup.signup": "ಸೈನ್ ಅಪ್ ಮಾಡಿ",
+  "signup.google": "Google ನೊಂದಿಗೆ ಸೈನ್ ಅಪ್ ಮಾಡಿ",
+  "nav.dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+  "nav.inventory": "ದಾಸ್ತಾನು",
+  "nav.recipes": "ಪಾಕವಿಧಾನಗಳು",
+  "nav.shopping-list": "ಖರೀದಿ ಪಟ್ಟಿ",
+  "nav.tips": "ಸಲಹೆಗಳು",
+  "header.logout": "ಲಾಗ್ ಔಟ್ ಮಾಡಿ",
+  "header.language": "ಭಾಷೆ",
+  "lang.en": "English",
+  "lang.hi": "हिन्दी (Hindi)",
+  "lang.kn": "ಕನ್ನಡ (Kannada)"
+}

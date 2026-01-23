@@ -15,10 +15,12 @@ import { useFirebase } from '@/firebase';
 import { handleEmailSignUp, handleEmailSignIn, handleGoogleSignIn } from '@/firebase/auth/actions';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/logo';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function LoginPage() {
   const { auth } = useFirebase();
   const router = useRouter();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,8 +41,9 @@ export default function LoginPage() {
       }
       router.push('/dashboard');
     } catch (err: any) {
-      if (err.code === 'auth/invalid-credential') {
-        setError('Invalid email or password. Please try again.');
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
+        setError('Incorrect email or password. Please try again or sign up.');
+        setActiveTab('signup');
       } else {
         setError('An error occurred during sign-in. Please try again.');
       }
@@ -83,30 +86,30 @@ export default function LoginPage() {
             </div>
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Log In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                <TabsTrigger value="login">{t('login.login')}</TabsTrigger>
+                <TabsTrigger value="signup">{t('signup.signup')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="login">
                 <Card>
                     <CardHeader>
-                    <CardTitle>Welcome Back</CardTitle>
+                    <CardTitle>{t('login.welcome')}</CardTitle>
                     <CardDescription>
-                        Sign in to manage your kitchen inventory.
+                        {t('login.description')}
                     </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="login-email">Email</Label>
+                        <Label htmlFor="login-email">{t('login.email')}</Label>
                         <Input id="login-email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="login-password">Password</Label>
+                        <Label htmlFor="login-password">{t('login.password')}</Label>
                         <Input id="login-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     {error && <p className="text-sm text-destructive">{error}</p>}
-                    <Button onClick={() => onSignIn('email')} className="w-full">Log In</Button>
+                    <Button onClick={() => onSignIn('email')} className="w-full">{t('login.login')}</Button>
                      <Button variant="outline" className="w-full" onClick={() => onSignIn('google')}>
-                        Sign In with Google
+                        {t('login.google')}
                     </Button>
                     </CardContent>
                 </Card>
@@ -114,24 +117,24 @@ export default function LoginPage() {
                 <TabsContent value="signup">
                 <Card>
                     <CardHeader>
-                    <CardTitle>Create an Account</CardTitle>
+                    <CardTitle>{t('signup.title')}</CardTitle>
                     <CardDescription>
-                        Get started with smart inventory management.
+                        {t('signup.description')}
                     </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                      <div className="space-y-2">
-                        <Label htmlFor="signup-email">Email</Label>
+                        <Label htmlFor="signup-email">{t('login.email')}</Label>
                         <Input id="signup-email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="signup-password">Password</Label>
+                        <Label htmlFor="signup-password">{t('login.password')}</Label>
                         <Input id="signup-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     {error && <p className="text-sm text-destructive">{error}</p>}
-                    <Button onClick={onSignUp} className="w-full">Sign Up</Button>
+                    <Button onClick={onSignUp} className="w-full">{t('signup.signup')}</Button>
                      <Button variant="outline" className="w-full" onClick={() => onSignIn('google')}>
-                        Sign Up with Google
+                        {t('signup.google')}
                     </Button>
                     </CardContent>
                 </Card>
