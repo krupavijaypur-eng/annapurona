@@ -8,7 +8,6 @@ export type InventoryItem = {
   storageLocation: StorageLocation;
   userId: string;
   imageUrl?: string;
-  expiryDate?: Date;
   createdAt: Date;
 };
 

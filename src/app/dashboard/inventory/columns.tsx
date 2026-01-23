@@ -7,59 +7,12 @@ import { InventoryItem, StorageLocation } from "@/lib/types"
 import { Refrigerator, Snowflake, Archive, MoreHorizontal, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { format, differenceInDays } from "date-fns"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 
 const storageIcons: Record<StorageLocation, React.ReactNode> = {
   fridge: <Refrigerator className="mr-2 h-4 w-4 text-blue-500" />,
   freezer: <Snowflake className="mr-2 h-4 w-4 text-cyan-400" />,
   pantry: <Archive className="mr-2 h-4 w-4 text-amber-600" />,
 }
-
-function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' {
-    if (days <= 1) return 'destructive';
-    if (days <= 3) return 'default';
-    return 'secondary';
-}
-
-const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
-    const [hydrated, setHydrated] = React.useState(false);
-    React.useEffect(() => {
-        setHydrated(true);
-    }, []);
-
-    const { expiryDate } = row.original;
-
-    if (!expiryDate) {
-        return <div className="text-center">-</div>;
-    }
-    
-    if (!hydrated) {
-        return (
-             <div className="flex flex-col items-center gap-1">
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-5 w-16" />
-            </div>
-        );
-    }
-    
-    const daysLeft = differenceInDays(expiryDate, new Date());
-    const badgeText = daysLeft < 0 
-        ? 'Expired'
-        : daysLeft === 0 
-            ? 'Expires today'
-            : `${daysLeft}d left`;
-
-    return (
-        <div className="flex flex-col items-center gap-1">
-            <span>{format(expiryDate, "PPP")}</span>
-            <Badge variant={getBadgeVariant(daysLeft)}>
-                {badgeText}
-            </Badge>
-        </div>
-    );
-};
 
 const ItemCell = ({ row }: { row: { original: InventoryItem } }) => {
     const item = row.original;
@@ -137,11 +90,6 @@ export const getColumns = (onDeleteItem: (id: string) => void): ColumnDef<Invent
     accessorKey: "storageLocation",
     header: "Location",
     cell: LocationCell,
-  },
-  {
-    accessorKey: "expiryDate",
-    header: () => <div className="text-center">Expires</div>,
-    cell: ExpiryCell,
   },
   {
     id: "actions",
