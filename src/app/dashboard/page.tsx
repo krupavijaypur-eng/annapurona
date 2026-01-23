@@ -14,6 +14,7 @@ import { ShoppingListSummary } from '@/components/dashboard/shopping-list-summar
 import { RecipeSuggestionsCta } from '@/components/dashboard/recipe-suggestions-cta';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppContext } from '@/context/AppContext';
+import { differenceInDays } from 'date-fns';
 
 export default function DashboardPage() {
     const { inventory, shoppingList, isDataLoaded } = useAppContext();
@@ -23,7 +24,7 @@ export default function DashboardPage() {
         if(isDataLoaded) {
             const expCount = inventory.filter(item => {
                 if (!item.expiryDate) return false;
-                const daysLeft = (new Date(item.expiryDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24);
+                const daysLeft = differenceInDays(item.expiryDate, new Date());
                 return daysLeft <= 7 && daysLeft >= 0;
             }).length;
             setExpiringCount(expCount);

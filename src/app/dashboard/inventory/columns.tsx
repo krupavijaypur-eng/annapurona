@@ -23,21 +23,18 @@ function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' 
     return 'secondary';
 }
 
-const ExpiryCell = ({ row }: { row: any }) => {
+const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
     const [hydrated, setHydrated] = React.useState(false);
     React.useEffect(() => {
         setHydrated(true);
     }, []);
 
-    const expiryDate = row.original.expiryDate;
+    const { expiryDate } = row.original;
 
     if (!expiryDate) {
         return <div className="text-center">-</div>;
     }
-
-    const date = new Date(expiryDate);
-    const daysLeft = differenceInDays(date, new Date());
-
+    
     if (!hydrated) {
         return (
              <div className="flex flex-col items-center gap-1">
@@ -46,12 +43,14 @@ const ExpiryCell = ({ row }: { row: any }) => {
             </div>
         );
     }
+    
+    const daysLeft = differenceInDays(expiryDate, new Date());
 
     return (
         <div className="flex flex-col items-center gap-1">
-            <span>{format(date, "MMM d, yyyy")}</span>
+            <span>{format(expiryDate, "MMM d, yyyy")}</span>
             <Badge variant={getBadgeVariant(daysLeft)}>
-                {daysLeft <= 0 ? 'Expired' : `${daysLeft}d left`}
+                {daysLeft < 0 ? 'Expired' : daysLeft === 0 ? 'Expires today' : `${daysLeft}d left`}
             </Badge>
         </div>
     );

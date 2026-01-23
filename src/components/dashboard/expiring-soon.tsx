@@ -86,7 +86,7 @@ export function ExpiringSoon() {
                         </p>
                     </div>
                     <Badge variant={getBadgeVariant(item.daysLeft)}>
-                        {item.daysLeft <= 0 ? 'Expired' : `${item.daysLeft}d left`}
+                        {item.daysLeft < 0 ? 'Expired' : item.daysLeft === 0 ? 'Expires today' : `${item.daysLeft}d left`}
                     </Badge>
                     </li>
                 ))}
