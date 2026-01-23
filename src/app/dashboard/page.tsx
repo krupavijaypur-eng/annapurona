@@ -1,3 +1,6 @@
+'use client';
+
+import * as React from 'react';
 import {
   Card,
   CardContent,
@@ -10,15 +13,28 @@ import { ExpiringSoon } from '@/components/dashboard/expiring-soon';
 import { ShoppingListSummary } from '@/components/dashboard/shopping-list-summary';
 import { mockInventory, mockShoppingList } from '@/lib/data';
 import { RecipeSuggestionsCta } from '@/components/dashboard/recipe-suggestions-cta';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardPage() {
-  const inventoryCount = mockInventory.length;
-  const expiringCount = mockInventory.filter(item => {
-    if (!item.expiryDate) return false;
-    const daysLeft = (new Date(item.expiryDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24);
-    return daysLeft <= 7;
-  }).length;
-  const shoppingListCount = mockShoppingList.filter(item => !item.checked).length;
+    const [isClient, setIsClient] = React.useState(false);
+    const [inventoryCount, setInventoryCount] = React.useState(0);
+    const [expiringCount, setExpiringCount] = React.useState(0);
+    const [shoppingListCount, setShoppingListCount] = React.useState(0);
+
+    React.useEffect(() => {
+        const invCount = mockInventory.length;
+        const expCount = mockInventory.filter(item => {
+            if (!item.expiryDate) return false;
+            const daysLeft = (new Date(item.expiryDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24);
+            return daysLeft <= 7;
+        }).length;
+        const shopCount = mockShoppingList.filter(item => !item.checked).length;
+
+        setInventoryCount(invCount);
+        setExpiringCount(expCount);
+        setShoppingListCount(shopCount);
+        setIsClient(true);
+    }, []);
 
   return (
     <div className="space-y-6">
@@ -29,8 +45,17 @@ export default function DashboardPage() {
             <Refrigerator className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{inventoryCount} items</div>
-            <p className="text-xs text-muted-foreground">in your kitchen</p>
+            {isClient ? (
+                <>
+                    <div className="text-2xl font-bold">{inventoryCount} items</div>
+                    <p className="text-xs text-muted-foreground">in your kitchen</p>
+                </>
+            ) : (
+                <>
+                    <Skeleton className="h-8 w-20 mb-1" />
+                    <Skeleton className="h-3 w-28" />
+                </>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -39,8 +64,17 @@ export default function DashboardPage() {
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{expiringCount} items</div>
-            <p className="text-xs text-muted-foreground">within a week</p>
+             {isClient ? (
+                <>
+                    <div className="text-2xl font-bold">{expiringCount} items</div>
+                    <p className="text-xs text-muted-foreground">within a week</p>
+                </>
+            ) : (
+                <>
+                    <Skeleton className="h-8 w-20 mb-1" />
+                    <Skeleton className="h-3 w-24" />
+                </>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -49,8 +83,17 @@ export default function DashboardPage() {
             <ShoppingBasket className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{shoppingListCount} items</div>
-            <p className="text-xs text-muted-foreground">left to buy</p>
+             {isClient ? (
+                <>
+                    <div className="text-2xl font-bold">{shoppingListCount} items</div>
+                    <p className="text-xs text-muted-foreground">left to buy</p>
+                </>
+            ) : (
+                <>
+                    <Skeleton className="h-8 w-20 mb-1" />
+                    <Skeleton className="h-3 w-20" />
+                </>
+            )}
           </CardContent>
         </Card>
       </div>
