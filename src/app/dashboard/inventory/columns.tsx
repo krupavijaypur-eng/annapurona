@@ -8,12 +8,8 @@ import { Refrigerator, Snowflake, Archive, MoreHorizontal, Trash2 } from "lucide
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { format, differenceInDays } from "date-fns"
-import { enUS, hi, kn } from 'date-fns/locale'
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useLanguage } from "@/context/LanguageContext"
-
-const locales = { en: enUS, hi, kn };
 
 const storageIcons: Record<StorageLocation, React.ReactNode> = {
   fridge: <Refrigerator className="mr-2 h-4 w-4 text-blue-500" />,
@@ -28,7 +24,6 @@ function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' 
 }
 
 const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
-    const { t, locale } = useLanguage();
     const [hydrated, setHydrated] = React.useState(false);
     React.useEffect(() => {
         setHydrated(true);
@@ -51,14 +46,14 @@ const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
     
     const daysLeft = differenceInDays(expiryDate, new Date());
     const badgeText = daysLeft < 0 
-        ? t('inventory.columns.expired') 
+        ? 'Expired'
         : daysLeft === 0 
-            ? t('inventory.columns.expiresToday') 
-            : t('inventory.columns.daysLeft').replace('{count}', String(daysLeft));
+            ? 'Expires today'
+            : `${daysLeft}d left`;
 
     return (
         <div className="flex flex-col items-center gap-1">
-            <span>{format(expiryDate, "PPP", { locale: locales[locale] })}</span>
+            <span>{format(expiryDate, "PPP")}</span>
             <Badge variant={getBadgeVariant(daysLeft)}>
                 {badgeText}
             </Badge>
@@ -67,7 +62,6 @@ const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
 };
 
 const ItemCell = ({ row }: { row: { original: InventoryItem } }) => {
-    const { t } = useLanguage();
     const item = row.original;
     return (
         <div className="flex items-center gap-3">
@@ -82,7 +76,7 @@ const ItemCell = ({ row }: { row: { original: InventoryItem } }) => {
             </div>
           ) : (
             <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted text-xs text-muted-foreground">
-              {t('inventory.columns.noImage')}
+              No img
             </div>
           )}
           <span>{item.name}</span>
@@ -91,20 +85,17 @@ const ItemCell = ({ row }: { row: { original: InventoryItem } }) => {
 }
 
 const LocationCell = ({ row }: { row: { original: InventoryItem } }) => {
-    const { t } = useLanguage();
     const location = row.original.storageLocation;
-    const locationText = t(`common.${location.toLowerCase()}`);
 
     return (
         <div className="flex items-center">
             {storageIcons[location]}
-            <span className="capitalize">{locationText}</span>
+            <span className="capitalize">{location}</span>
         </div>
     )
 }
 
 const ActionsCell = ({ row, onDeleteItem }: { row: { original: InventoryItem }, onDeleteItem: (id: string) => void }) => {
-    const { t } = useLanguage();
     const item = row.original;
 
     return (
@@ -112,14 +103,14 @@ const ActionsCell = ({ row, onDeleteItem }: { row: { original: InventoryItem }, 
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">{t('common.openMenu')}</span>
+                <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onDeleteItem(item.id)} className="text-destructive cursor-pointer">
                     <Trash2 className="mr-2 h-4 w-4" />
-                    {t('common.delete')}
+                    Delete
                 </DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
@@ -128,15 +119,15 @@ const ActionsCell = ({ row, onDeleteItem }: { row: { original: InventoryItem }, 
 }
 
 
-export const getColumns = (onDeleteItem: (id: string) => void, t: (key: string) => string): ColumnDef<InventoryItem>[] => [
+export const getColumns = (onDeleteItem: (id: string) => void): ColumnDef<InventoryItem>[] => [
   {
     accessorKey: "name",
-    header: t('inventory.columns.item'),
+    header: "Item",
     cell: ItemCell,
   },
   {
     accessorKey: "quantity",
-    header: () => <div className="text-center">{t('inventory.columns.quantity')}</div>,
+    header: () => <div className="text-center">Quantity</div>,
     cell: ({ row }) => {
         const item = row.original;
         return <div className="text-center">{`${item.quantity} ${item.unit}`}</div>
@@ -144,12 +135,12 @@ export const getColumns = (onDeleteItem: (id: string) => void, t: (key: string) 
   },
   {
     accessorKey: "storageLocation",
-    header: t('inventory.columns.location'),
+    header: "Location",
     cell: LocationCell,
   },
   {
     accessorKey: "expiryDate",
-    header: () => <div className="text-center">{t('inventory.columns.expires')}</div>,
+    header: () => <div className="text-center">Expires</div>,
     cell: ExpiryCell,
   },
   {

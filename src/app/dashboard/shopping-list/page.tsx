@@ -18,11 +18,9 @@ import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, writeBatch, doc } from 'firebase/firestore';
 import { ShoppingListItem } from '@/lib/types';
 import { addShoppingListItem, updateShoppingListItem, deleteShoppingListItem } from '@/firebase/firestore/actions';
-import { useLanguage } from '@/context/LanguageContext';
 
 export default function ShoppingListPage() {
   const { firestore, user } = useFirebase();
-  const { t } = useLanguage();
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState(1);
   const [newItemUnit, setNewItemUnit] = useState('items');
@@ -106,30 +104,30 @@ export default function ShoppingListPage() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle>{t('shoppingList.title')}</CardTitle>
+            <CardTitle>Shopping List</CardTitle>
             <CardDescription>
-              {t('shoppingList.description')}
+              Manage your grocery needs. Add new items or check off what you've bought.
             </CardDescription>
           </div>
           <Button variant="outline" onClick={handleClearChecked} className="mt-4 sm:mt-0" disabled={purchasedItems.length === 0}>
             <Trash2 className="mr-2 h-4 w-4" />
-            {t('shoppingList.clearChecked')}
+            Clear Checked Items
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleAddItem} className="flex items-end gap-2 mb-6">
           <div className="flex-grow">
-            <Label htmlFor="itemName" className="sr-only">{t('common.name')}</Label>
-            <Input id="itemName" value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder={t('shoppingList.addItemPlaceholder')} />
+            <Label htmlFor="itemName" className="sr-only">Name</Label>
+            <Input id="itemName" value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Add new item..." />
           </div>
           <div className="w-24">
-            <Label htmlFor="itemQuantity" className="sr-only">{t('common.quantity')}</Label>
+            <Label htmlFor="itemQuantity" className="sr-only">Quantity</Label>
             <Input id="itemQuantity" type="number" min="0" step="0.1" value={newItemQuantity} onChange={e => setNewItemQuantity(parseFloat(e.target.value) || 0)} className="text-center" />
           </div>
           <div className="w-28">
-            <Label htmlFor="itemUnit" className="sr-only">{t('common.unit')}</Label>
-            <Input id="itemUnit" value={newItemUnit} onChange={e => setNewItemUnit(e.target.value)} placeholder={t('shoppingList.unitPlaceholder')} />
+            <Label htmlFor="itemUnit" className="sr-only">Unit</Label>
+            <Input id="itemUnit" value={newItemUnit} onChange={e => setNewItemUnit(e.target.value)} placeholder="e.g. kg" />
           </div>
           <Button type="submit" size="icon"><Plus className="h-4 w-4" /></Button>
         </form>
@@ -151,7 +149,7 @@ export default function ShoppingListPage() {
 
           {purchasedItems.length > 0 && (
             <div>
-              <h3 className="mb-3 text-sm font-medium text-muted-foreground">{t('shoppingList.completed')}</h3>
+              <h3 className="mb-3 text-sm font-medium text-muted-foreground">Completed</h3>
               <ul className="space-y-3">
                 {purchasedItems.map(item => (
                   <li key={item.id} className="flex items-center gap-3">
@@ -165,7 +163,7 @@ export default function ShoppingListPage() {
           )}
 
           {shoppingList.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">{t('shoppingList.empty')}</p>
+            <p className="text-center text-muted-foreground py-8">Your shopping list is empty.</p>
           )}
         </div>
       </CardContent>

@@ -15,11 +15,9 @@ import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { ShoppingListItem } from '@/lib/types';
 import { ScrollArea } from '../ui/scroll-area';
-import { useLanguage } from '@/context/LanguageContext';
 
 export function ShoppingListSummary() {
   const { firestore, user } = useFirebase();
-  const { t } = useLanguage();
 
   const shoppingListQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -34,10 +32,10 @@ export function ShoppingListSummary() {
       <CardHeader>
         <div className="flex items-center gap-2">
           <ShoppingBasket className="text-primary" />
-          <CardTitle>{t('shoppingList.title')}</CardTitle>
+          <CardTitle>Shopping List</CardTitle>
         </div>
         <CardDescription>
-          {t('dashboard.shoppingListSummary.description')}
+          A quick look at what you need to buy.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
@@ -68,7 +66,7 @@ export function ShoppingListSummary() {
             </ul>
           ) : (
             <div className="flex h-full items-center justify-center">
-              <p className="text-center text-muted-foreground">{t('dashboard.shoppingListSummary.empty')}</p>
+              <p className="text-center text-muted-foreground">Your shopping list is empty.</p>
             </div>
           )}
         </ScrollArea>
@@ -76,7 +74,7 @@ export function ShoppingListSummary() {
       <div className="p-6 pt-0">
         <Link href="/dashboard/shopping-list">
           <Button className="w-full" variant="outline">
-            {t('dashboard.shoppingListSummary.button')} <ArrowRight className="ml-2 h-4 w-4" />
+            View Full List <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
       </div>

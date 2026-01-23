@@ -23,18 +23,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { enUS, hi, kn } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { addInventoryItem, deleteInventoryItem } from '@/firebase/firestore/actions';
-import { useLanguage } from '@/context/LanguageContext';
-
-const locales = { en: enUS, hi, kn };
 
 export default function InventoryPage() {
   const { firestore, user } = useFirebase();
-  const { t } = useLanguage();
 
   const inventoryQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -48,7 +43,7 @@ export default function InventoryPage() {
       deleteInventoryItem(firestore, user.uid, itemId);
   }, [firestore, user]);
 
-  const columns = React.useMemo(() => getColumns(handleDelete, t), [handleDelete, t]);
+  const columns = React.useMemo(() => getColumns(handleDelete), [handleDelete]);
 
   if (isLoading || !inventory) {
     return (
@@ -74,8 +69,8 @@ export default function InventoryPage() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>{t('inventory.title')}</CardTitle>
-            <CardDescription>{t('inventory.description')}</CardDescription>
+            <CardTitle>Inventory</CardTitle>
+            <CardDescription>Manage your fridge, freezer, and pantry items.</CardDescription>
           </div>
           <AddItemSheet />
         </div>
@@ -89,7 +84,6 @@ export default function InventoryPage() {
 
 function AddItemSheet() {
   const { firestore, user } = useFirebase();
-  const { t, locale } = useLanguage();
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState('');
   const [quantity, setQuantity] = React.useState(1);
@@ -115,26 +109,26 @@ function AddItemSheet() {
       <SheetTrigger asChild>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
-          {t('inventory.addItem')}
+          Add Item
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{t('inventory.addItemSheet.title')}</SheetTitle>
+          <SheetTitle>Add New Item</SheetTitle>
           <SheetDescription>
-            {t('inventory.addItemSheet.description')}
+            Enter the details of your new grocery item.
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              {t('common.name')}
+              Name
             </Label>
-            <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder={t('inventory.addItemSheet.namePlaceholder')} className="col-span-3" />
+            <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Apples" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">
-              {t('common.quantity')}
+              Quantity
             </Label>
             <div className="col-span-3 grid grid-cols-3 gap-2">
               <Input
@@ -150,29 +144,29 @@ function AddItemSheet() {
                 id="unit"
                 value={unit}
                 onChange={e => setUnit(e.target.value)}
-                placeholder={t('common.unitPlaceholder')}
+                placeholder="e.g. kg, g, items"
                 className="col-span-2"
               />
             </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="storage" className="text-right">
-              {t('common.location')}
+              Location
             </Label>
             <Select onValueChange={(value: StorageLocation) => setStorageLocation(value)} value={storageLocation}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder={t('common.selectLocation')} />
+                <SelectValue placeholder="Select storage location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="fridge">{t('common.fridge')}</SelectItem>
-                <SelectItem value="freezer">{t('common.freezer')}</SelectItem>
-                <SelectItem value="pantry">{t('common.pantry')}</SelectItem>
+                <SelectItem value="fridge">Fridge</SelectItem>
+                <SelectItem value="freezer">Freezer</SelectItem>
+                <SelectItem value="pantry">Pantry</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="expiryDate" className="text-right">
-              {t('common.expiryDate')}
+              Expiry Date
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -184,7 +178,7 @@ function AddItemSheet() {
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {expiryDate ? format(expiryDate, "PPP", { locale: locales[locale] }) : <span>{t('common.pickADate')}</span>}
+                  {expiryDate ? format(expiryDate, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -193,14 +187,13 @@ function AddItemSheet() {
                   selected={expiryDate}
                   onSelect={setExpiryDate}
                   initialFocus
-                  locale={locales[locale]}
                 />
               </PopoverContent>
             </Popover>
           </div>
         </div>
         <SheetFooter>
-          <Button onClick={handleSubmit} type="submit">{t('common.save')}</Button>
+          <Button onClick={handleSubmit} type="submit">Save changes</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
