@@ -1,0 +1,171 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All user-generated data,
+ * including inventory, shopping lists, and preferences, is private and can only be accessed by the
+ * user who created it. This ensures strong data privacy and isolation between users. A separate,
+ * top-level collection for "Waste Reduction Tips" is made publicly readable to all users, but
+ * is not writable from the client, assuming it is managed by administrators.
+ *
+ * Data Structure: User data is hierarchically organized under the `/users/{userId}` path. This
+ * structure allows for simple, performant, and secure rules based on path ownership. For example,
+ * a user's inventory is located at `/users/{userId}/inventoryItems`, making it trivial to grant
+ * access only to that specific user.
+ *
+ * Key Security Decisions:
+ * - User Enumeration is Disallowed: Listing the top-level `/users` collection is forbidden to
+ *   protect user privacy and prevent scraping of user profiles.
+ * - Strict Ownership: A user can only access data within their own `/users/{userId}` document tree.
+ * - Admin-Managed Content: The `/wasteReductionTips` collection is read-only for clients. This
+ *   content is expected to be populated through a trusted server environment or the Firebase Console.
+ * - Default Deny: All access is denied by default, and permissions are granted explicitly.
+ *
+ * Denormalization for Authorization: To ensure performant and secure rules, user-specific documents
+ * (like `InventoryItem` or `ShoppingList`) are expected to contain a `userId` field. The rules
+ * validate this field upon document creation to enforce a direct ownership link and make it immutable
+ * on updates, preventing any change in ownership. This avoids costly `get()` calls to parent documents.
+ *
+ * Structural Segregation: The ruleset leverages structural segregation by separating globally public
+ * data (`/wasteReductionTips`) from private, user-specific data (`/users/{userId}`). This is a highly
+ * secure and performant pattern that simplifies rules for list operations and prevents accidental
+ * data leakage.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --------------------------------
+    // Helper Functions
+    // --------------------------------
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the core function for establishing document ownership.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks for ownership on an existing document. Used for update and delete
+     * operations to prevent actions on non-existent documents.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    // --------------------------------
+    // User Profile Rules
+    // --------------------------------
+
+    /**
+     * @description Manages user profile documents. A user can create their own profile, and only
+     *              they can read or modify it. Listing users is disallowed to protect privacy.
+     * @path /users/{userId}
+     * @allow (create) An authenticated user creating their own user document: `create /users/user_abc` where auth.uid is `user_abc`.
+     * @deny  (get) A user trying to read another user's profile: `get /users/user_xyz` where auth.uid is `user_abc`.
+     * @deny  (list) Any user trying to list all users: `list /users`.
+     * @principle Restricts access to a user's own data tree and allows for self-creation of a profile.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if false; // Users should not be able to delete their own profiles.
+    }
+
+    // --------------------------------
+    // User Inventory Rules
+    // --------------------------------
+
+    /**
+     * @description Secures a user's personal inventory items. Only the owner can create, read,
+     *              update, or delete their own inventory items.
+     * @path /users/{userId}/inventoryItems/{inventoryItemId}
+     * @allow (create) An authenticated user adding an item to their own inventory: `create /users/user_abc/inventoryItems/item_123`.
+     * @deny  (get) A user trying to read an item from another user's inventory: `get /users/user_xyz/inventoryItems/item_456`.
+     * @principle Enforces strict document ownership within a user's private subcollection.
+     */
+    match /users/{userId}/inventoryItems/{inventoryItemId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    // --------------------------------
+    // User Shopping List Rules
+    // --------------------------------
+
+    /**
+     * @description Secures a user's shopping lists. Only the owner can manage their lists.
+     * @path /users/{userId}/shoppingLists/{shoppingListId}
+     * @allow (create) An authenticated user creating a new shopping list for themselves: `create /users/user_abc/shoppingLists/groceries`.
+     * @deny  (delete) A user trying to delete another user's shopping list: `delete /users/user_xyz/shoppingLists/weekend`.
+     * @principle Enforces strict document ownership within a user's private subcollection.
+     */
+    match /users/{userId}/shoppingLists/{shoppingListId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Secures the items within a user's shopping list. Access is inherited from the parent list.
+     * @path /users/{userId}/shoppingLists/{shoppingListId}/shoppingListItems/{shoppingListItemId}
+     * @allow (update) The list owner checking off an item: `update /users/user_abc/shoppingLists/groceries/item_123`.
+     * @deny  (create) A user trying to add an item to someone else's list: `create /users/user_xyz/shoppingLists/weekend/item_456`.
+     * @principle Enforces inherited ownership from the parent document path.
+     */
+    match /users/{userId}/shoppingLists/{shoppingListId}/shoppingListItems/{shoppingListItemId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.shoppingListId == shoppingListId;
+      allow update: if isExistingOwner(userId) && request.resource.data.shoppingListId == resource.data.shoppingListId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    // --------------------------------
+    // User Tip Preference Rules
+    // --------------------------------
+
+    /**
+     * @description Secures a user's preferences for waste reduction tips. Only the owner can manage their preferences.
+     * @path /users/{userId}/wasteTipPreferences/{wasteTipPreferenceId}
+     * @allow (create) An authenticated user setting a preference for a tip: `create /users/user_abc/wasteTipPreferences/pref_123`.
+     * @deny  (get) A user trying to read another user's tip preferences: `get /users/user_xyz/wasteTipPreferences/pref_456`.
+     * @principle Enforces strict document ownership within a user's private subcollection.
+     */
+    match /users/{userId}/wasteTipPreferences/{wasteTipPreferenceId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    // --------------------------------
+    // Public Content Rules
+    // --------------------------------
+
+    /**
+     * @description Provides public, read-only access to global waste reduction tips.
+     *              This content is assumed to be managed by an administrator.
+     * @path /wasteReductionTips/{wasteReductionTipId}
+     * @allow (get) Any user, including unauthenticated ones, reading a tip: `get /wasteReductionTips/tip_123`.
+     * @deny  (create) Any client trying to add a new tip: `create /wasteReductionTips/new_tip`.
+     * @principle Provides public read access while preventing any client-side modifications.
+     */
+    match /wasteReductionTips/{wasteReductionTipId} {
+      allow get, list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
