@@ -110,7 +110,7 @@ function AddItemSheet({ onAddItem }: { onAddItem: (item: Omit<InventoryItem, 'id
             <Label htmlFor="name" className="text-right">
               Name
             </Label>
-            <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Organic Apples" className="col-span-3" />
+            <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Enter item name" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">

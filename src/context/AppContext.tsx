@@ -59,7 +59,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const newItem: InventoryItem = {
       ...item,
       id: newId,
-      imageUrl: `https://picsum.photos/seed/${newId}/100/100`,
     };
     setInventory(prev => [...prev, newItem]);
   };
