@@ -19,10 +19,12 @@ import type { InventoryItem, Recipe } from '@/lib/types';
 import { ChefHat, Loader2 } from 'lucide-react';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
+import { useLanguage } from '@/context/LanguageContext';
 
 
 export default function RecipesPage() {
   const { firestore, user } = useFirebase();
+  const { t } = useLanguage();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export default function RecipesPage() {
 
     try {
       if (!inventory || inventory.length === 0) {
-        setError('Your inventory is empty. Add some items to get recipe suggestions.');
+        setError(t('recipes.emptyInventory'));
         setIsLoading(false);
         return;
       }
@@ -53,7 +55,7 @@ export default function RecipesPage() {
       const result = await suggestRecipes({ ingredients });
       setRecipes(result.recipes);
     } catch (e) {
-      setError('Failed to generate recipes. Please try again.');
+      setError(t('recipes.error'));
       console.error(e);
     } finally {
       setIsLoading(false);
@@ -64,9 +66,9 @@ export default function RecipesPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Recipe Suggestions</CardTitle>
+          <CardTitle>{t('recipes.title')}</CardTitle>
           <CardDescription>
-            Get recipe ideas based on your current inventory.
+            {t('recipes.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -74,10 +76,10 @@ export default function RecipesPage() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
+                {t('recipes.generating')}
               </>
             ) : (
-              'Generate Recipes'
+              t('recipes.generate')
             )}
           </Button>
         </CardContent>
@@ -86,7 +88,7 @@ export default function RecipesPage() {
       {error && (
         <Card className="bg-destructive/10 border-destructive">
           <CardHeader>
-            <CardTitle className="text-destructive">Error</CardTitle>
+            <CardTitle className="text-destructive">{t('common.error')}</CardTitle>
             <CardDescription className="text-destructive">{error}</CardDescription>
           </CardHeader>
         </Card>
@@ -104,7 +106,7 @@ export default function RecipesPage() {
               <CardContent>
                 <Accordion type="single" collapsible>
                   <AccordionItem value="ingredients">
-                    <AccordionTrigger>Ingredients</AccordionTrigger>
+                    <AccordionTrigger>{t('recipes.ingredients')}</AccordionTrigger>
                     <AccordionContent>
                       <ul className="list-disc list-inside space-y-1">
                         {recipe.ingredients.map((ing, i) => (
@@ -114,7 +116,7 @@ export default function RecipesPage() {
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="instructions">
-                    <AccordionTrigger>Instructions</AccordionTrigger>
+                    <AccordionTrigger>{t('recipes.instructions')}</AccordionTrigger>
                     <AccordionContent className="whitespace-pre-wrap">
                       {recipe.instructions}
                     </AccordionContent>

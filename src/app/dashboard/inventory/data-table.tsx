@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useLanguage } from "@/context/LanguageContext"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const { t } = useLanguage();
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
 
@@ -55,7 +57,7 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="flex items-center">
         <Input
-          placeholder="Filter items..."
+          placeholder={t('inventory.filterPlaceholder')}
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -100,7 +102,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  {t('common.noResults')}
                 </TableCell>
               </TableRow>
             )}

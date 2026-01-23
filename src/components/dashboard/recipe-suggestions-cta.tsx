@@ -10,8 +10,10 @@ import {
 import { ArrowRight, ChefHat } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useLanguage } from '@/context/LanguageContext';
 
 export function RecipeSuggestionsCta() {
+  const { t } = useLanguage();
   const recipeImage = PlaceHolderImages.find(img => img.id === 'recipe-placeholder');
   
   return (
@@ -19,10 +21,10 @@ export function RecipeSuggestionsCta() {
       <CardHeader>
         <div className="flex items-center gap-2">
             <ChefHat className="text-primary"/>
-            <CardTitle>Recipe Suggestions</CardTitle>
+            <CardTitle>{t('recipes.title')}</CardTitle>
         </div>
         <CardDescription>
-          Discover delicious recipes you can make with what you have.
+          {t('dashboard.recipeCta.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
@@ -38,13 +40,13 @@ export function RecipeSuggestionsCta() {
              </div>
           )}
         <p className="mt-4 text-sm text-muted-foreground">
-          Let AI help you reduce waste and cook amazing meals.
+          {t('dashboard.recipeCta.subtext')}
         </p>
       </CardContent>
       <div className="p-6 pt-0">
         <Link href="/dashboard/recipes">
           <Button className="w-full" variant="outline">
-            Find Recipes <ArrowRight className="ml-2 h-4 w-4" />
+            {t('dashboard.recipeCta.button')} <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
       </div>

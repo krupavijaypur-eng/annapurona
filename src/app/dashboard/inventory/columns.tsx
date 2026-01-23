@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { format, differenceInDays } from "date-fns"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useLanguage } from "@/context/LanguageContext"
 
 const storageIcons: Record<StorageLocation, React.ReactNode> = {
   fridge: <Refrigerator className="mr-2 h-4 w-4 text-blue-500" />,
@@ -24,6 +25,7 @@ function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' 
 }
 
 const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
+    const { t } = useLanguage();
     const [hydrated, setHydrated] = React.useState(false);
     React.useEffect(() => {
         setHydrated(true);
@@ -45,25 +47,26 @@ const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
     }
     
     const daysLeft = differenceInDays(expiryDate, new Date());
+    const badgeText = daysLeft < 0 
+        ? t('inventory.columns.expired') 
+        : daysLeft === 0 
+            ? t('inventory.columns.expiresToday') 
+            : t('inventory.columns.daysLeft').replace('{count}', String(daysLeft));
 
     return (
         <div className="flex flex-col items-center gap-1">
             <span>{format(expiryDate, "MMM d, yyyy")}</span>
             <Badge variant={getBadgeVariant(daysLeft)}>
-                {daysLeft < 0 ? 'Expired' : daysLeft === 0 ? 'Expires today' : `${daysLeft}d left`}
+                {badgeText}
             </Badge>
         </div>
     );
 };
 
-
-export const getColumns = (onDeleteItem: (id: string) => void): ColumnDef<InventoryItem>[] => [
-  {
-    accessorKey: "name",
-    header: "Item",
-    cell: ({ row }) => {
-      const item = row.original
-      return (
+const ItemCell = ({ row }: { row: { original: InventoryItem } }) => {
+    const { t } = useLanguage();
+    const item = row.original;
+    return (
         <div className="flex items-center gap-3">
           {item.imageUrl ? (
             <div className="relative h-10 w-10 overflow-hidden rounded-md">
@@ -76,46 +79,32 @@ export const getColumns = (onDeleteItem: (id: string) => void): ColumnDef<Invent
             </div>
           ) : (
             <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted text-xs text-muted-foreground">
-              No img
+              {t('inventory.columns.noImage')}
             </div>
           )}
           <span>{item.name}</span>
         </div>
       )
-    },
-  },
-  {
-    accessorKey: "quantity",
-    header: () => <div className="text-center">Quantity</div>,
-    cell: ({ row }) => {
-        const item = row.original;
-        return <div className="text-center">{`${item.quantity} ${item.unit}`}</div>
-    },
-  },
-  {
-    accessorKey: "storage",
-    header: "Location",
-    cell: ({ row }) => {
-      const location = row.getValue("storage") as StorageLocation;
-      return (
-        <div className="flex items-center">
-          {storageIcons[location]}
-          <span className="capitalize">{location}</span>
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: "expiryDate",
-    header: () => <div className="text-center">Expires</div>,
-    cell: ExpiryCell,
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const item = row.original
+}
 
-      return (
+const LocationCell = ({ row }: { row: { original: InventoryItem } }) => {
+    const { t } = useLanguage();
+    const location = row.original.storageLocation;
+    const locationText = t(`common.${location.toLowerCase()}`);
+
+    return (
+        <div className="flex items-center">
+            {storageIcons[location]}
+            <span className="capitalize">{locationText}</span>
+        </div>
+    )
+}
+
+const ActionsCell = ({ row, onDeleteItem }: { row: { original: InventoryItem }, onDeleteItem: (id: string) => void }) => {
+    const { t } = useLanguage();
+    const item = row.original;
+
+    return (
         <div className="text-right">
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -127,12 +116,41 @@ export const getColumns = (onDeleteItem: (id: string) => void): ColumnDef<Invent
             <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onDeleteItem(item.id)} className="text-destructive cursor-pointer">
                     <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
+                    {t('common.delete')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
         </div>
-      )
+    )
+}
+
+
+export const getColumns = (onDeleteItem: (id: string) => void, t: (key: string) => string): ColumnDef<InventoryItem>[] => [
+  {
+    accessorKey: "name",
+    header: t('inventory.columns.item'),
+    cell: ItemCell,
+  },
+  {
+    accessorKey: "quantity",
+    header: () => <div className="text-center">{t('inventory.columns.quantity')}</div>,
+    cell: ({ row }) => {
+        const item = row.original;
+        return <div className="text-center">{`${item.quantity} ${item.unit}`}</div>
     },
+  },
+  {
+    accessorKey: "storageLocation",
+    header: t('inventory.columns.location'),
+    cell: LocationCell,
+  },
+  {
+    accessorKey: "expiryDate",
+    header: () => <div className="text-center">{t('inventory.columns.expires')}</div>,
+    cell: ExpiryCell,
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <ActionsCell row={row} onDeleteItem={onDeleteItem} />,
   },
 ]

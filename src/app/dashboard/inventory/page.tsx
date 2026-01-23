@@ -27,10 +27,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { addInventoryItem, deleteInventoryItem } from '@/firebase/firestore/actions';
+import { useLanguage } from '@/context/LanguageContext';
 
 
 export default function InventoryPage() {
   const { firestore, user } = useFirebase();
+  const { t } = useLanguage();
 
   const inventoryQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -44,7 +46,7 @@ export default function InventoryPage() {
       deleteInventoryItem(firestore, user.uid, itemId);
   }, [firestore, user]);
 
-  const columns = React.useMemo(() => getColumns(handleDelete), [handleDelete]);
+  const columns = React.useMemo(() => getColumns(handleDelete, t), [handleDelete, t]);
 
   if (isLoading || !inventory) {
     return (
@@ -70,8 +72,8 @@ export default function InventoryPage() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Inventory</CardTitle>
-            <CardDescription>Manage your fridge, freezer, and pantry items.</CardDescription>
+            <CardTitle>{t('inventory.title')}</CardTitle>
+            <CardDescription>{t('inventory.description')}</CardDescription>
           </div>
           <AddItemSheet />
         </div>
@@ -85,22 +87,23 @@ export default function InventoryPage() {
 
 function AddItemSheet() {
   const { firestore, user } = useFirebase();
+  const { t } = useLanguage();
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState('');
   const [quantity, setQuantity] = React.useState(1);
   const [unit, setUnit] = React.useState('items');
-  const [storage, setStorage] = React.useState<StorageLocation | undefined>();
+  const [storageLocation, setStorageLocation] = React.useState<StorageLocation | undefined>();
   const [expiryDate, setExpiryDate] = React.useState<Date | undefined>();
 
   const handleSubmit = () => {
-    if (name && quantity > 0 && storage && unit && user) {
-      addInventoryItem(firestore, user.uid, { name, quantity, unit, storage, expiryDate });
+    if (name && quantity > 0 && storageLocation && unit && user) {
+      addInventoryItem(firestore, user.uid, { name, quantity, unit, storageLocation, expiryDate });
       setOpen(false);
       // Reset form
       setName('');
       setQuantity(1);
       setUnit('items');
-      setStorage(undefined);
+      setStorageLocation(undefined);
       setExpiryDate(undefined);
     }
   };
@@ -110,26 +113,26 @@ function AddItemSheet() {
       <SheetTrigger asChild>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
-          Add Item
+          {t('inventory.addItem')}
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add New Item</SheetTitle>
+          <SheetTitle>{t('inventory.addItemSheet.title')}</SheetTitle>
           <SheetDescription>
-            Enter the details of your new grocery item.
+            {t('inventory.addItemSheet.description')}
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name
+              {t('common.name')}
             </Label>
-            <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Apples" className="col-span-3" />
+            <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder={t('inventory.addItemSheet.namePlaceholder')} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">
-              Quantity
+              {t('common.quantity')}
             </Label>
             <div className="col-span-3 grid grid-cols-3 gap-2">
               <Input
@@ -145,29 +148,29 @@ function AddItemSheet() {
                 id="unit"
                 value={unit}
                 onChange={e => setUnit(e.target.value)}
-                placeholder="e.g. kg, g, items"
+                placeholder={t('common.unitPlaceholder')}
                 className="col-span-2"
               />
             </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="storage" className="text-right">
-              Location
+              {t('common.location')}
             </Label>
-            <Select onValueChange={(value: StorageLocation) => setStorage(value)} value={storage}>
+            <Select onValueChange={(value: StorageLocation) => setStorageLocation(value)} value={storageLocation}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select storage location" />
+                <SelectValue placeholder={t('common.selectLocation')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="fridge">Fridge</SelectItem>
-                <SelectItem value="freezer">Freezer</SelectItem>
-                <SelectItem value="pantry">Pantry</SelectItem>
+                <SelectItem value="fridge">{t('common.fridge')}</SelectItem>
+                <SelectItem value="freezer">{t('common.freezer')}</SelectItem>
+                <SelectItem value="pantry">{t('common.pantry')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="expiryDate" className="text-right">
-              Expiry Date
+              {t('common.expiryDate')}
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -179,7 +182,7 @@ function AddItemSheet() {
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {expiryDate ? format(expiryDate, "PPP") : <span>Pick a date</span>}
+                  {expiryDate ? format(expiryDate, "PPP") : <span>{t('common.pickADate')}</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -194,7 +197,7 @@ function AddItemSheet() {
           </div>
         </div>
         <SheetFooter>
-          <Button onClick={handleSubmit} type="submit">Save changes</Button>
+          <Button onClick={handleSubmit} type="submit">{t('common.save')}</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

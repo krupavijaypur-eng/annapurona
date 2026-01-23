@@ -15,12 +15,14 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, writeBatch } from 'firebase/firestore';
+import { collection, writeBatch, doc } from 'firebase/firestore';
 import { ShoppingListItem } from '@/lib/types';
 import { addShoppingListItem, updateShoppingListItem, deleteShoppingListItem } from '@/firebase/firestore/actions';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ShoppingListPage() {
   const { firestore, user } = useFirebase();
+  const { t } = useLanguage();
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState(1);
   const [newItemUnit, setNewItemUnit] = useState('items');
@@ -39,7 +41,7 @@ export default function ShoppingListPage() {
         name: newItemName.trim(),
         quantity: newItemQuantity,
         unit: newItemUnit.trim(),
-        checked: false,
+        isPurchased: false,
       });
       setNewItemName('');
       setNewItemQuantity(1);
@@ -49,15 +51,15 @@ export default function ShoppingListPage() {
 
   const handleToggleItem = (item: ShoppingListItem) => {
     if (!user) return;
-    updateShoppingListItem(firestore, user.uid, item.id, { checked: !item.checked });
+    updateShoppingListItem(firestore, user.uid, item.id, { isPurchased: !item.isPurchased });
   };
 
   const handleClearChecked = () => {
     if (!user || !shoppingList) return;
     const batch = writeBatch(firestore);
     shoppingList.forEach(item => {
-      if (item.checked) {
-        const itemRef = collection(firestore, `users/${user.uid}/shoppingListItems`).doc(item.id);
+      if (item.isPurchased) {
+        const itemRef = doc(firestore, `users/${user.uid}/shoppingListItems`, item.id);
         batch.delete(itemRef);
       }
     });
@@ -96,48 +98,48 @@ export default function ShoppingListPage() {
     );
   }
 
-  const checkedItems = shoppingList.filter(item => item.checked);
-  const uncheckedItems = shoppingList.filter(item => !item.checked);
+  const purchasedItems = shoppingList.filter(item => item.isPurchased);
+  const unpurchasedItems = shoppingList.filter(item => !item.isPurchased);
 
   return (
     <Card>
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle>Shopping List</CardTitle>
+            <CardTitle>{t('shoppingList.title')}</CardTitle>
             <CardDescription>
-              Manage your grocery needs. Add new items or check off what you've bought.
+              {t('shoppingList.description')}
             </CardDescription>
           </div>
-          <Button variant="outline" onClick={handleClearChecked} className="mt-4 sm:mt-0" disabled={checkedItems.length === 0}>
+          <Button variant="outline" onClick={handleClearChecked} className="mt-4 sm:mt-0" disabled={purchasedItems.length === 0}>
             <Trash2 className="mr-2 h-4 w-4" />
-            Clear Checked Items
+            {t('shoppingList.clearChecked')}
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleAddItem} className="flex items-end gap-2 mb-6">
           <div className="flex-grow">
-            <Label htmlFor="itemName" className="sr-only">Item Name</Label>
-            <Input id="itemName" value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Add new item..." />
+            <Label htmlFor="itemName" className="sr-only">{t('common.name')}</Label>
+            <Input id="itemName" value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder={t('shoppingList.addItemPlaceholder')} />
           </div>
           <div className="w-24">
-            <Label htmlFor="itemQuantity" className="sr-only">Quantity</Label>
+            <Label htmlFor="itemQuantity" className="sr-only">{t('common.quantity')}</Label>
             <Input id="itemQuantity" type="number" min="0" step="0.1" value={newItemQuantity} onChange={e => setNewItemQuantity(parseFloat(e.target.value) || 0)} className="text-center" />
           </div>
           <div className="w-28">
-            <Label htmlFor="itemUnit" className="sr-only">Unit</Label>
-            <Input id="itemUnit" value={newItemUnit} onChange={e => setNewItemUnit(e.target.value)} placeholder="e.g. kg" />
+            <Label htmlFor="itemUnit" className="sr-only">{t('common.unit')}</Label>
+            <Input id="itemUnit" value={newItemUnit} onChange={e => setNewItemUnit(e.target.value)} placeholder={t('shoppingList.unitPlaceholder')} />
           </div>
           <Button type="submit" size="icon"><Plus className="h-4 w-4" /></Button>
         </form>
 
         <div className="space-y-4">
-          {uncheckedItems.length > 0 && (
+          {unpurchasedItems.length > 0 && (
             <ul className="space-y-3">
-              {uncheckedItems.map(item => (
+              {unpurchasedItems.map(item => (
                 <li key={item.id} className="flex items-center gap-3">
-                  <Checkbox id={item.id} checked={item.checked} onCheckedChange={() => handleToggleItem(item)} />
+                  <Checkbox id={item.id} checked={item.isPurchased} onCheckedChange={() => handleToggleItem(item)} />
                   <label htmlFor={item.id} className="flex-1 text-sm font-medium">{item.name}</label>
                   <span className="text-sm text-muted-foreground">{`${item.quantity} ${item.unit}`}</span>
                 </li>
@@ -145,15 +147,15 @@ export default function ShoppingListPage() {
             </ul>
           )}
 
-          {checkedItems.length > 0 && uncheckedItems.length > 0 && <Separator />}
+          {purchasedItems.length > 0 && unpurchasedItems.length > 0 && <Separator />}
 
-          {checkedItems.length > 0 && (
+          {purchasedItems.length > 0 && (
             <div>
-              <h3 className="mb-3 text-sm font-medium text-muted-foreground">Completed</h3>
+              <h3 className="mb-3 text-sm font-medium text-muted-foreground">{t('shoppingList.completed')}</h3>
               <ul className="space-y-3">
-                {checkedItems.map(item => (
+                {purchasedItems.map(item => (
                   <li key={item.id} className="flex items-center gap-3">
-                    <Checkbox id={item.id} checked={item.checked} onCheckedChange={() => handleToggleItem(item)} />
+                    <Checkbox id={item.id} checked={item.isPurchased} onCheckedChange={() => handleToggleItem(item)} />
                     <label htmlFor={item.id} className="flex-1 text-sm text-muted-foreground line-through">{item.name}</label>
                     <span className="text-sm text-muted-foreground line-through">{`${item.quantity} ${item.unit}`}</span>
                   </li>
@@ -163,7 +165,7 @@ export default function ShoppingListPage() {
           )}
 
           {shoppingList.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">Your shopping list is empty.</p>
+            <p className="text-center text-muted-foreground py-8">{t('shoppingList.empty')}</p>
           )}
         </div>
       </CardContent>

@@ -11,8 +11,10 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getPersonalizedFoodWasteTips } from '@/ai/flows/personalized-food-waste-tips';
 import { Lightbulb, Loader2 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function TipsPage() {
+  const { t } = useLanguage();
   const [tips, setTips] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export default function TipsPage() {
       const result = await getPersonalizedFoodWasteTips(mockInput);
       setTips(result.tips);
     } catch (e) {
-      setError('Failed to generate tips. Please try again.');
+      setError(t('tips.error'));
       console.error(e);
     } finally {
       setIsLoading(false);
@@ -42,9 +44,9 @@ export default function TipsPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Food Waste Reduction Tips</CardTitle>
+          <CardTitle>{t('tips.title')}</CardTitle>
           <CardDescription>
-            Get personalized tips to help you reduce food waste, save money, and be more sustainable.
+            {t('tips.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -52,10 +54,10 @@ export default function TipsPage() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating Tips...
+                {t('tips.generating')}
               </>
             ) : (
-              'Get My Personalized Tips'
+              t('tips.getTips')
             )}
           </Button>
         </CardContent>
@@ -64,7 +66,7 @@ export default function TipsPage() {
       {error && (
         <Card className="bg-destructive/10 border-destructive">
           <CardHeader>
-            <CardTitle className="text-destructive">Error</CardTitle>
+            <CardTitle className="text-destructive">{t('common.error')}</CardTitle>
             <CardDescription className="text-destructive">{error}</CardDescription>
           </CardHeader>
         </Card>
@@ -73,13 +75,13 @@ export default function TipsPage() {
       {tips.length > 0 && (
         <Card>
             <CardHeader>
-                <CardTitle>Your Personalized Tips</CardTitle>
+                <CardTitle>{t('tips.yourTips')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
             {tips.map((tip, index) => (
                 <Alert key={index}>
                     <Lightbulb className="h-4 w-4" />
-                    <AlertTitle>Tip #{index + 1}</AlertTitle>
+                    <AlertTitle>{t('tips.tipNumber').replace('{number}', String(index + 1))}</AlertTitle>
                     <AlertDescription>{tip}</AlertDescription>
                 </Alert>
             ))}

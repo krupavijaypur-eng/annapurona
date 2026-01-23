@@ -16,9 +16,11 @@ import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { differenceInDays } from 'date-fns';
 import { InventoryItem, ShoppingListItem } from '@/lib/types';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function DashboardPage() {
     const { firestore, user } = useFirebase();
+    const { t } = useLanguage();
 
     const inventoryQuery = useMemoFirebase(() => {
         if (!user) return null;
@@ -46,7 +48,7 @@ export default function DashboardPage() {
     }, [inventory]);
 
     const inventoryCount = inventory?.length ?? 0;
-    const shoppingListCount = shoppingList?.filter(item => !item.checked).length ?? 0;
+    const shoppingListCount = shoppingList?.filter(item => !item.isPurchased).length ?? 0;
 
   if (!isDataLoaded) {
       return (
@@ -79,32 +81,32 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Inventory</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.totalInventory')}</CardTitle>
             <Refrigerator className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{inventoryCount} items</div>
-            <p className="text-xs text-muted-foreground">in your kitchen</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.inYourKitchen')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.expiringSoon')}</CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
              <div className="text-2xl font-bold">{expiringCount} items</div>
-              <p className="text-xs text-muted-foreground">within a week</p>
+              <p className="text-xs text-muted-foreground">{t('dashboard.withinAWeek')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Shopping List</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.shoppingList')}</CardTitle>
             <ShoppingBasket className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
              <div className="text-2xl font-bold">{shoppingListCount} items</div>
-              <p className="text-xs text-muted-foreground">left to buy</p>
+              <p className="text-xs text-muted-foreground">{t('dashboard.leftToBuy')}</p>
           </CardContent>
         </Card>
       </div>

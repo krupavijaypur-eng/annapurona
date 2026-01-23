@@ -5,7 +5,7 @@ export type InventoryItem = {
   name: string;
   quantity: number;
   unit: string;
-  storage: StorageLocation;
+  storageLocation: StorageLocation;
   userId: string;
   imageUrl?: string;
   expiryDate?: Date;
@@ -23,7 +23,7 @@ export type ShoppingListItem = {
   name: string;
   quantity: number;
   unit: string;
-  checked: boolean;
+  isPurchased: boolean;
   userId: string;
   createdAt: Date;
 };

@@ -2,13 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { differenceInDays, formatDistanceToNow } from 'date-fns';
+import { differenceInDays, formatDistanceToNow, formatDistanceToNowStrict } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
 import { type InventoryItem } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
+import { useLanguage } from '@/context/LanguageContext';
+import { enUS, hi, kn } from 'date-fns/locale';
+
+const locales = { en: enUS, hi, kn };
 
 function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' {
   if (days <= 1) return 'destructive';
@@ -20,6 +24,7 @@ type ExpiringItem = InventoryItem & { daysLeft: number };
 
 export function ExpiringSoon() {
   const { firestore, user } = useFirebase();
+  const { t, locale } = useLanguage();
   const [expiringSoon, setExpiringSoon] = useState<ExpiringItem[] | null>(null);
 
   const inventoryQuery = useMemoFirebase(() => {
@@ -50,7 +55,7 @@ export function ExpiringSoon() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <AlertTriangle className="text-accent" /> Expiring Soon
+            <AlertTriangle className="text-accent" /> {t('dashboard.expiringSoon')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -70,11 +75,25 @@ export function ExpiringSoon() {
     );
   }
 
+  const getExpiryText = (item: ExpiringItem) => {
+    const distance = formatDistanceToNowStrict(item.expiryDate, { addSuffix: false, locale: locales[locale] });
+    if (item.daysLeft < 0) {
+        return t('dashboard.expiredAgo').replace('{distance}', distance);
+    }
+    return t('dashboard.expiresIn').replace('{distance}', distance);
+  }
+
+  const getBadgeText = (item: ExpiringItem) => {
+      if (item.daysLeft < 0) return t('dashboard.expired');
+      if (item.daysLeft === 0) return t('dashboard.expiresToday');
+      return t('dashboard.daysLeft').replace('{count}', String(item.daysLeft));
+  }
+
   return (
     <Card className="flex flex-col h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <AlertTriangle className="text-accent" /> Expiring Soon
+          <AlertTriangle className="text-accent" /> {t('dashboard.expiringSoon')}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow">
@@ -88,13 +107,11 @@ export function ExpiringSoon() {
                 <div>
                   <p className="font-medium">{item.name}</p>
                   <p className="text-sm text-muted-foreground">
-                    {item.daysLeft < 0
-                      ? `Expired ${formatDistanceToNow(item.expiryDate, { addSuffix: true })}`
-                      : `Expires ${formatDistanceToNow(item.expiryDate, { addSuffix: true })}`}
+                    {getExpiryText(item)}
                   </p>
                 </div>
                 <Badge variant={getBadgeVariant(item.daysLeft)}>
-                  {item.daysLeft < 0 ? 'Expired' : item.daysLeft === 0 ? 'Expires today' : `${item.daysLeft}d left`}
+                  {getBadgeText(item)}
                 </Badge>
               </li>
             ))}
@@ -102,7 +119,7 @@ export function ExpiringSoon() {
         ) : (
           <div className="flex h-full items-center justify-center">
             <p className="text-center text-muted-foreground">
-              Nothing is expiring soon. Great job!
+              {t('dashboard.nothingExpiring')}
             </p>
           </div>
         )}
