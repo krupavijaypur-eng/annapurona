@@ -14,13 +14,16 @@ import { mockShoppingList } from '@/lib/data';
 import type { ShoppingListItem } from '@/lib/types';
 import { Plus, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ShoppingListPage() {
   const [list, setList] = useState<ShoppingListItem[]>([]);
   const [newItemName, setNewItemName] = useState('');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setList(mockShoppingList);
+    setIsClient(true);
   }, []);
 
   const handleToggleItem = (id: string) => {
@@ -62,7 +65,7 @@ export default function ShoppingListPage() {
                 Manage your grocery needs. Add new items or check off what you've bought.
                 </CardDescription>
             </div>
-            <Button variant="outline" onClick={handleRemoveChecked} className="mt-4 sm:mt-0" disabled={checkedItems.length === 0}>
+            <Button variant="outline" onClick={handleRemoveChecked} className="mt-4 sm:mt-0" disabled={!isClient || checkedItems.length === 0}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Clear Checked Items
             </Button>
@@ -80,56 +83,73 @@ export default function ShoppingListPage() {
           </Button>
         </form>
 
-        <div className="space-y-4">
-            {uncheckedItems.length > 0 && <ul className="space-y-3">
-              {uncheckedItems.map(item => (
-                <li key={item.id} className="flex items-center gap-3">
-                  <Checkbox
-                    id={item.id}
-                    checked={item.checked}
-                    onCheckedChange={() => handleToggleItem(item.id)}
-                  />
-                  <label
-                    htmlFor={item.id}
-                    className="flex-1 text-sm font-medium"
-                  >
-                    {item.name}
-                  </label>
-                  <span className="text-sm text-muted-foreground">Qty: {item.quantity}</span>
-                </li>
-              ))}
-            </ul>}
-            
-            {checkedItems.length > 0 && uncheckedItems.length > 0 && <Separator />}
-
-            {checkedItems.length > 0 && (
-                <div>
-                    <h3 className="mb-3 text-sm font-medium text-muted-foreground">Completed</h3>
-                    <ul className="space-y-3">
-                    {checkedItems.map(item => (
-                        <li key={item.id} className="flex items-center gap-3">
-                        <Checkbox
-                            id={item.id}
-                            checked={item.checked}
-                            onCheckedChange={() => handleToggleItem(item.id)}
-                        />
-                        <label
-                            htmlFor={item.id}
-                            className="flex-1 text-sm text-muted-foreground line-through"
-                        >
-                            {item.name}
-                        </label>
-                         <span className="text-sm text-muted-foreground line-through">Qty: {item.quantity}</span>
-                        </li>
-                    ))}
-                    </ul>
+        {!isClient ? (
+            <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                    <Skeleton className="h-4 w-4" />
+                    <Skeleton className="h-4 w-1/2" />
                 </div>
-            )}
+                <div className="flex items-center gap-3">
+                    <Skeleton className="h-4 w-4" />
+                    <Skeleton className="h-4 w-2/3" />
+                </div>
+                <div className="flex items-center gap-3">
+                    <Skeleton className="h-4 w-4" />
+                    <Skeleton className="h-4 w-1/3" />
+                </div>
+            </div>
+        ) : (
+            <div className="space-y-4">
+                {uncheckedItems.length > 0 && <ul className="space-y-3">
+                {uncheckedItems.map(item => (
+                    <li key={item.id} className="flex items-center gap-3">
+                    <Checkbox
+                        id={item.id}
+                        checked={item.checked}
+                        onCheckedChange={() => handleToggleItem(item.id)}
+                    />
+                    <label
+                        htmlFor={item.id}
+                        className="flex-1 text-sm font-medium"
+                    >
+                        {item.name}
+                    </label>
+                    <span className="text-sm text-muted-foreground">Qty: {item.quantity}</span>
+                    </li>
+                ))}
+                </ul>}
+                
+                {checkedItems.length > 0 && uncheckedItems.length > 0 && <Separator />}
 
-            {list.length === 0 && (
-                <p className="text-center text-muted-foreground py-8">Your shopping list is empty.</p>
-            )}
-        </div>
+                {checkedItems.length > 0 && (
+                    <div>
+                        <h3 className="mb-3 text-sm font-medium text-muted-foreground">Completed</h3>
+                        <ul className="space-y-3">
+                        {checkedItems.map(item => (
+                            <li key={item.id} className="flex items-center gap-3">
+                            <Checkbox
+                                id={item.id}
+                                checked={item.checked}
+                                onCheckedChange={() => handleToggleItem(item.id)}
+                            />
+                            <label
+                                htmlFor={item.id}
+                                className="flex-1 text-sm text-muted-foreground line-through"
+                            >
+                                {item.name}
+                            </label>
+                            <span className="text-sm text-muted-foreground line-through">Qty: {item.quantity}</span>
+                            </li>
+                        ))}
+                        </ul>
+                    </div>
+                )}
+
+                {list.length === 0 && (
+                    <p className="text-center text-muted-foreground py-8">Your shopping list is empty.</p>
+                )}
+            </div>
+        )}
       </CardContent>
     </Card>
   );
