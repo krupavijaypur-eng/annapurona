@@ -7,7 +7,7 @@ import { getColumns } from './columns';
 import { DataTable } from './data-table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, CalendarIcon, Camera } from 'lucide-react';
+import { PlusCircle, CalendarIcon } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -89,16 +89,18 @@ function AddItemSheet({ onAddItem }: { onAddItem: (item: Omit<InventoryItem, 'id
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState('');
     const [quantity, setQuantity] = React.useState(1);
+    const [unit, setUnit] = React.useState('items');
     const [storage, setStorage] = React.useState<StorageLocation | undefined>();
     const [expiryDate, setExpiryDate] = React.useState<Date | undefined>();
 
     const handleSubmit = () => {
-        if (name && quantity > 0 && storage) {
-            onAddItem({ name, quantity, storage, expiryDate });
+        if (name && quantity > 0 && storage && unit) {
+            onAddItem({ name, quantity, unit, storage, expiryDate });
             setOpen(false);
             // Reset form
             setName('');
             setQuantity(1);
+            setUnit('items');
             setStorage(undefined);
             setExpiryDate(undefined);
         }
@@ -127,10 +129,27 @@ function AddItemSheet({ onAddItem }: { onAddItem: (item: Omit<InventoryItem, 'id
             <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Organic Apples" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="quantity" className="text-right">
+            <Label className="text-right">
               Quantity
             </Label>
-            <Input id="quantity" type="number" min="1" value={quantity} onChange={e => setQuantity(parseInt(e.target.value, 10) || 1)} className="col-span-3" />
+            <div className="col-span-3 grid grid-cols-3 gap-2">
+                <Input 
+                    id="quantity" 
+                    type="number" 
+                    min="0"
+                    step="0.1"
+                    value={quantity} 
+                    onChange={e => setQuantity(parseFloat(e.target.value) || 0)} 
+                    className="col-span-1" 
+                />
+                <Input 
+                    id="unit" 
+                    value={unit} 
+                    onChange={e => setUnit(e.target.value)} 
+                    placeholder="e.g. kg, g, items"
+                    className="col-span-2" 
+                />
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="storage" className="text-right">
@@ -173,12 +192,6 @@ function AddItemSheet({ onAddItem }: { onAddItem: (item: Omit<InventoryItem, 'id
                 />
               </PopoverContent>
             </Popover>
-          </div>
-           <div className="grid grid-cols-4 items-center gap-4">
-             <Label className="text-right">Scan</Label>
-             <Button variant="outline" className="col-span-3">
-                <Camera className="mr-2 h-4 w-4" /> Scan Barcode/Item
-            </Button>
           </div>
         </div>
         <SheetFooter>

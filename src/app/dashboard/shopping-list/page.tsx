@@ -21,6 +21,7 @@ export default function ShoppingListPage() {
   const [list, setList] = useState<ShoppingListItem[] | null>(null);
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState(1);
+  const [newItemUnit, setNewItemUnit] = useState('items');
 
   useEffect(() => {
     // Simulate fetching data to avoid hydration mismatch
@@ -39,16 +40,18 @@ export default function ShoppingListPage() {
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (!list) return;
-    if (newItemName.trim() && newItemQuantity > 0) {
+    if (newItemName.trim() && newItemQuantity > 0 && newItemUnit.trim()) {
       const newItem: ShoppingListItem = {
         id: new Date().toISOString(),
         name: newItemName.trim(),
         quantity: newItemQuantity,
+        unit: newItemUnit.trim(),
         checked: false,
       };
       setList([...list, newItem]);
       setNewItemName('');
       setNewItemQuantity(1);
+      setNewItemUnit('items');
     }
   };
 
@@ -71,8 +74,11 @@ export default function ShoppingListPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-end gap-2 mb-6">
-                <div className="flex-grow"><Skeleton className="h-10" /></div>
-                <div><Skeleton className="h-10 w-20" /></div>
+                <div className="grid grid-cols-5 gap-2 w-full">
+                    <div className="col-span-3"><Skeleton className="h-10" /></div>
+                    <div className="col-span-1"><Skeleton className="h-10" /></div>
+                    <div className="col-span-1"><Skeleton className="h-10" /></div>
+                </div>
                 <Skeleton className="h-10 w-10" />
             </div>
             <div className="space-y-3">
@@ -124,16 +130,26 @@ export default function ShoppingListPage() {
                 placeholder="Add new item..."
             />
           </div>
-          <div>
+          <div className="w-24">
             <Label htmlFor="itemQuantity" className="sr-only">Quantity</Label>
             <Input
                 id="itemQuantity"
                 type="number"
-                min="1"
+                min="0"
+                step="0.1"
                 value={newItemQuantity}
-                onChange={e => setNewItemQuantity(parseInt(e.target.value, 10) || 1)}
-                className="w-20 text-center"
+                onChange={e => setNewItemQuantity(parseFloat(e.target.value) || 0)}
+                className="text-center"
             />
+          </div>
+          <div className="w-28">
+             <Label htmlFor="itemUnit" className="sr-only">Unit</Label>
+             <Input
+                id="itemUnit"
+                value={newItemUnit}
+                onChange={e => setNewItemUnit(e.target.value)}
+                placeholder="e.g. kg"
+             />
           </div>
           <Button type="submit" size="icon">
             <Plus className="h-4 w-4" />
@@ -155,7 +171,7 @@ export default function ShoppingListPage() {
                 >
                     {item.name}
                 </label>
-                <span className="text-sm text-muted-foreground">Qty: {item.quantity}</span>
+                <span className="text-sm text-muted-foreground">{`${item.quantity} ${item.unit}`}</span>
                 </li>
             ))}
             </ul>}
@@ -179,7 +195,7 @@ export default function ShoppingListPage() {
                         >
                             {item.name}
                         </label>
-                        <span className="text-sm text-muted-foreground line-through">Qty: {item.quantity}</span>
+                        <span className="text-sm text-muted-foreground line-through">{`${item.quantity} ${item.unit}`}</span>
                         </li>
                     ))}
                     </ul>

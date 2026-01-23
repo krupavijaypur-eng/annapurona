@@ -88,7 +88,10 @@ export const getColumns = (onDeleteItem: (id: string) => void): ColumnDef<Invent
   {
     accessorKey: "quantity",
     header: () => <div className="text-center">Quantity</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("quantity")}</div>,
+    cell: ({ row }) => {
+        const item = row.original;
+        return <div className="text-center">{`${item.quantity} ${item.unit}`}</div>
+    },
   },
   {
     accessorKey: "storage",

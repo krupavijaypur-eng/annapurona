@@ -8,7 +8,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarFooter,
   SidebarInset,
 } from '@/components/ui/sidebar';
 import {
@@ -17,7 +16,6 @@ import {
   Lightbulb,
   Refrigerator,
   ShoppingBasket,
-  CircleUser,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { DashboardHeader } from '@/components/dashboard/header';
@@ -61,20 +59,6 @@ export default function DashboardLayout({
               ))}
             </SidebarMenu>
           </SidebarContent>
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Profile">
-                  <Link href="/dashboard/profile">
-                    <>
-                      <CircleUser />
-                      <span>Profile</span>
-                    </>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
         </Sidebar>
         <SidebarInset>
           <DashboardHeader />
