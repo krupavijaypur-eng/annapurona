@@ -23,12 +23,14 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { enUS, hi, kn } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { addInventoryItem, deleteInventoryItem } from '@/firebase/firestore/actions';
 import { useLanguage } from '@/context/LanguageContext';
 
+const locales = { en: enUS, hi, kn };
 
 export default function InventoryPage() {
   const { firestore, user } = useFirebase();
@@ -87,7 +89,7 @@ export default function InventoryPage() {
 
 function AddItemSheet() {
   const { firestore, user } = useFirebase();
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState('');
   const [quantity, setQuantity] = React.useState(1);
@@ -182,7 +184,7 @@ function AddItemSheet() {
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {expiryDate ? format(expiryDate, "PPP") : <span>{t('common.pickADate')}</span>}
+                  {expiryDate ? format(expiryDate, "PPP", { locale: locales[locale] }) : <span>{t('common.pickADate')}</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -191,6 +193,7 @@ function AddItemSheet() {
                   selected={expiryDate}
                   onSelect={setExpiryDate}
                   initialFocus
+                  locale={locales[locale]}
                 />
               </PopoverContent>
             </Popover>

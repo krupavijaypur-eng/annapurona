@@ -8,9 +8,12 @@ import { Refrigerator, Snowflake, Archive, MoreHorizontal, Trash2 } from "lucide
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { format, differenceInDays } from "date-fns"
+import { enUS, hi, kn } from 'date-fns/locale'
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useLanguage } from "@/context/LanguageContext"
+
+const locales = { en: enUS, hi, kn };
 
 const storageIcons: Record<StorageLocation, React.ReactNode> = {
   fridge: <Refrigerator className="mr-2 h-4 w-4 text-blue-500" />,
@@ -25,7 +28,7 @@ function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' 
 }
 
 const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
     const [hydrated, setHydrated] = React.useState(false);
     React.useEffect(() => {
         setHydrated(true);
@@ -55,7 +58,7 @@ const ExpiryCell = ({ row }: { row: { original: InventoryItem } }) => {
 
     return (
         <div className="flex flex-col items-center gap-1">
-            <span>{format(expiryDate, "MMM d, yyyy")}</span>
+            <span>{format(expiryDate, "PPP", { locale: locales[locale] })}</span>
             <Badge variant={getBadgeVariant(daysLeft)}>
                 {badgeText}
             </Badge>
