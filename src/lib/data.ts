@@ -3,6 +3,8 @@ import { PlaceHolderImages } from './placeholder-images';
 
 const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl;
 
+const today = new Date();
+
 export const mockInventory: InventoryItem[] = [
   {
     id: '1',
@@ -10,6 +12,7 @@ export const mockInventory: InventoryItem[] = [
     quantity: 1,
     storage: 'fridge',
     imageUrl: getImage('item-milk'),
+    expiryDate: new Date(new Date().setDate(new Date().getDate() + 7)),
   },
   {
     id: '2',
@@ -17,6 +20,7 @@ export const mockInventory: InventoryItem[] = [
     quantity: 1,
     storage: 'pantry',
     imageUrl: getImage('item-bread'),
+    expiryDate: new Date(new Date().setDate(new Date().getDate() + 5)),
   },
   {
     id: '3',
@@ -24,6 +28,7 @@ export const mockInventory: InventoryItem[] = [
     quantity: 2,
     storage: 'freezer',
     imageUrl: getImage('item-chicken'),
+    expiryDate: new Date(new Date().setDate(new Date().getDate() + 2)),
   },
   {
     id: '4',
@@ -31,6 +36,7 @@ export const mockInventory: InventoryItem[] = [
     quantity: 5,
     storage: 'fridge',
     imageUrl: getImage('item-tomatoes'),
+    expiryDate: new Date(new Date().setDate(new Date().getDate() + 10)),
   },
   {
     id: '5',
@@ -38,6 +44,7 @@ export const mockInventory: InventoryItem[] = [
     quantity: 1,
     storage: 'fridge',
     imageUrl: getImage('item-spinach'),
+    expiryDate: new Date(new Date().setDate(new Date().getDate() + 1)),
   },
   {
     id: '6',
@@ -45,6 +52,7 @@ export const mockInventory: InventoryItem[] = [
     quantity: 1,
     storage: 'fridge',
     imageUrl: getImage('item-cheese'),
+    expiryDate: new Date(new Date().setDate(new Date().getDate() + 20)),
   },
     {
     id: '7',
@@ -52,6 +60,7 @@ export const mockInventory: InventoryItem[] = [
     quantity: 3,
     storage: 'pantry',
     imageUrl: getImage('item-onions'),
+    expiryDate: new Date(new Date().setDate(new Date().getDate() + 30)),
   },
 ];
 

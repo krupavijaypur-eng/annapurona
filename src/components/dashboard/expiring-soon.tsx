@@ -7,6 +7,7 @@ import { differenceInDays, formatDistanceToNow } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
 import { type InventoryItem } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 function getBadgeVariant(days: number): 'default' | 'destructive' | 'secondary' {
   if (days <= 1) return 'destructive';
@@ -22,6 +23,7 @@ export function ExpiringSoon() {
   useEffect(() => {
     // This effect runs only on the client, after the component has mounted.
     const expiring = mockInventory
+      .filter((item): item is InventoryItem & { expiryDate: Date } => !!item.expiryDate)
       .map((item) => ({
         ...item,
         daysLeft: differenceInDays(item.expiryDate, new Date()),
@@ -34,54 +36,64 @@ export function ExpiringSoon() {
 
   if (expiringSoon === null) {
     return (
-      <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-lg font-semibold">
-          <AlertTriangle className="text-accent" /> Expiring Soon
-        </h3>
-        <div className="space-y-2">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="flex items-center justify-between rounded-md border p-3">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-[100px]" />
-                <Skeleton className="h-4 w-[150px]" />
-              </div>
-              <Skeleton className="h-6 w-[60px] rounded-full" />
+      <Card>
+        <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+                <AlertTriangle className="text-accent" /> Expiring Soon
+            </CardTitle>
+        </CardHeader>
+        <CardContent>
+            <div className="space-y-2">
+            {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center justify-between rounded-md border p-3">
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-[100px]" />
+                    <Skeleton className="h-4 w-[150px]" />
+                </div>
+                <Skeleton className="h-6 w-[60px] rounded-full" />
+                </div>
+            ))}
             </div>
-          ))}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <h3 className="flex items-center gap-2 text-lg font-semibold">
-        <AlertTriangle className="text-accent" /> Expiring Soon
-      </h3>
-      {expiringSoon.length > 0 ? (
-        <ul className="space-y-2">
-          {expiringSoon.map((item) => (
-            <li
-              key={item.id}
-              className="flex items-center justify-between rounded-md border p-3"
-            >
-              <div>
-                <p className="font-medium">{item.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  Expires in {formatDistanceToNow(item.expiryDate, { addSuffix: true })}
-                </p>
-              </div>
-              <Badge variant={getBadgeVariant(item.daysLeft)}>
-                {item.daysLeft <= 0 ? 'Expired' : `${item.daysLeft}d left`}
-              </Badge>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-muted-foreground">
-          Nothing is expiring soon. Great job!
-        </p>
-      )}
-    </div>
+     <Card className="flex flex-col h-full">
+        <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+                <AlertTriangle className="text-accent" /> Expiring Soon
+            </CardTitle>
+        </CardHeader>
+        <CardContent className="flex-grow">
+            {expiringSoon.length > 0 ? (
+                <ul className="space-y-2">
+                {expiringSoon.map((item) => (
+                    <li
+                    key={item.id}
+                    className="flex items-center justify-between rounded-md border p-3"
+                    >
+                    <div>
+                        <p className="font-medium">{item.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                        Expires {formatDistanceToNow(item.expiryDate, { addSuffix: true })}
+                        </p>
+                    </div>
+                    <Badge variant={getBadgeVariant(item.daysLeft)}>
+                        {item.daysLeft <= 0 ? 'Expired' : `${item.daysLeft}d left`}
+                    </Badge>
+                    </li>
+                ))}
+                </ul>
+            ) : (
+                <div className="flex h-full items-center justify-center">
+                    <p className="text-center text-muted-foreground">
+                    Nothing is expiring soon. Great job!
+                    </p>
+                </div>
+            )}
+        </CardContent>
+      </Card>
   );
 }

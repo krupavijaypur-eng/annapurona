@@ -1,16 +1,70 @@
+'use client';
+
+import * as React from 'react';
 import { mockInventory } from '@/lib/data';
-import { InventoryItem } from '@/lib/types';
-import { columns } from './columns';
+import { InventoryItem, StorageLocation } from '@/lib/types';
+import { getColumns } from './columns';
 import { DataTable } from './data-table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { PlusCircle, CalendarIcon, Camera } from 'lucide-react';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
 
-async function getInventory(): Promise<InventoryItem[]> {
-  // In a real app, you'd fetch this from a database
-  return mockInventory;
-}
+export default function InventoryPage() {
+  const [data, setData] = React.useState<InventoryItem[]>([]);
+  const [isClient, setIsClient] = React.useState(false);
 
-export default async function InventoryPage() {
-  const data = await getInventory();
+  React.useEffect(() => {
+    // Simulate fetching data
+    setData(mockInventory);
+    setIsClient(true);
+  }, []);
+
+  const handleDeleteItem = (id: string) => {
+    setData(prevData => prevData.filter(item => item.id !== id));
+  };
+  
+  const handleAddItem = (newItem: Omit<InventoryItem, 'id' | 'imageUrl'>) => {
+    const newId = new Date().toISOString();
+    setData(prevData => [...prevData, { ...newItem, id: newId, imageUrl: `https://picsum.photos/seed/${newId}/100/100` }]);
+  };
+  
+  const columns = React.useMemo(() => getColumns(handleDeleteItem), []);
+
+  if (!isClient) {
+      return (
+           <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <Skeleton className="h-8 w-32" />
+                        <Skeleton className="h-4 w-72 mt-2" />
+                    </div>
+                    <Skeleton className="h-10 w-28" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-96" />
+              </CardContent>
+            </Card>
+      );
+  }
 
   return (
     <Card>
@@ -20,6 +74,7 @@ export default async function InventoryPage() {
             <CardTitle>Inventory</CardTitle>
             <CardDescription>Manage your fridge, freezer, and pantry items.</CardDescription>
           </div>
+          <AddItemSheet onAddItem={handleAddItem} />
         </div>
       </CardHeader>
       <CardContent>
@@ -27,4 +82,109 @@ export default async function InventoryPage() {
       </CardContent>
     </Card>
   );
+}
+
+
+function AddItemSheet({ onAddItem }: { onAddItem: (item: Omit<InventoryItem, 'id' | 'imageUrl'>) => void }) {
+    const [open, setOpen] = React.useState(false);
+    const [name, setName] = React.useState('');
+    const [quantity, setQuantity] = React.useState(1);
+    const [storage, setStorage] = React.useState<StorageLocation | undefined>();
+    const [expiryDate, setExpiryDate] = React.useState<Date | undefined>();
+
+    const handleSubmit = () => {
+        if (name && quantity > 0 && storage) {
+            onAddItem({ name, quantity, storage, expiryDate });
+            setOpen(false);
+            // Reset form
+            setName('');
+            setQuantity(1);
+            setStorage(undefined);
+            setExpiryDate(undefined);
+        }
+    };
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Item
+        </Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Add New Item</SheetTitle>
+          <SheetDescription>
+            Enter the details of your new grocery item.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Name
+            </Label>
+            <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Organic Apples" className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="quantity" className="text-right">
+              Quantity
+            </Label>
+            <Input id="quantity" type="number" min="1" value={quantity} onChange={e => setQuantity(parseInt(e.target.value, 10) || 1)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="storage" className="text-right">
+              Location
+            </Label>
+            <Select onValueChange={(value: StorageLocation) => setStorage(value)} value={storage}>
+                <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select storage location" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="fridge">Fridge</SelectItem>
+                    <SelectItem value="freezer">Freezer</SelectItem>
+                    <SelectItem value="pantry">Pantry</SelectItem>
+                </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="expiryDate" className="text-right">
+              Expiry Date
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "col-span-3 justify-start text-left font-normal",
+                    !expiryDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {expiryDate ? format(expiryDate, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={expiryDate}
+                  onSelect={setExpiryDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+           <div className="grid grid-cols-4 items-center gap-4">
+             <Label className="text-right">Scan</Label>
+             <Button variant="outline" className="col-span-3">
+                <Camera className="mr-2 h-4 w-4" /> Scan Barcode/Item
+            </Button>
+          </div>
+        </div>
+        <SheetFooter>
+            <Button onClick={handleSubmit} type="submit">Save changes</Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  )
 }

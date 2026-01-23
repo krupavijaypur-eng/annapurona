@@ -6,6 +6,7 @@ export type InventoryItem = {
   quantity: number;
   storage: StorageLocation;
   imageUrl?: string;
+  expiryDate?: Date;
 };
 
 export type Recipe = {

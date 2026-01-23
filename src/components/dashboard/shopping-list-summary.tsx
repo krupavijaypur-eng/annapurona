@@ -13,10 +13,10 @@ import { mockShoppingList } from '@/lib/data';
 import { ScrollArea } from '../ui/scroll-area';
 
 export function ShoppingListSummary() {
-    const listToShow = mockShoppingList.slice(0, 4);
+    const listToShow = mockShoppingList.slice(0, 5);
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full">
       <CardHeader>
       <div className="flex items-center gap-2">
             <ShoppingBasket className="text-primary"/>
@@ -27,8 +27,8 @@ export function ShoppingListSummary() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
-        <ScrollArea className="h-48">
-            <ul className="space-y-3">
+        <ScrollArea className="h-full">
+            {listToShow.length > 0 ? <ul className="space-y-3 pr-4">
             {listToShow.map(item => (
                 <li key={item.id} className="flex items-center gap-3">
                 <Checkbox id={`summary-${item.id}`} checked={item.checked} />
@@ -36,11 +36,16 @@ export function ShoppingListSummary() {
                     htmlFor={`summary-${item.id}`}
                     className={`flex-1 text-sm ${item.checked ? 'text-muted-foreground line-through' : ''}`}
                 >
-                    {item.name} ({item.quantity})
+                    {item.name}
                 </label>
+                 <span className="text-sm text-muted-foreground">Qty: {item.quantity}</span>
                 </li>
             ))}
-            </ul>
+            </ul> : 
+            <div className="flex h-full items-center justify-center">
+                <p className="text-center text-muted-foreground">Your shopping list is empty.</p>
+            </div>
+            }
         </ScrollArea>
       </CardContent>
       <div className="p-6 pt-0">
