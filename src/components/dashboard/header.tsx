@@ -36,7 +36,7 @@ export function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
-      <SidebarTrigger className="md:hidden" />
+      <SidebarTrigger className="md:hidden" srText={t('header.toggleSidebar')} />
 
       <h1 className="text-xl font-semibold md:text-2xl">{translatedTitle}</h1>
 
@@ -45,7 +45,7 @@ export function DashboardHeader() {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                     <Languages className="h-5 w-5" />
-                    <span className="sr-only">Change language</span>
+                    <span className="sr-only">{t('header.changeLanguageSr')}</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
