@@ -34,7 +34,7 @@ export default function LoginPage() {
         await handleGoogleSignIn(auth);
       } else {
         if (!email || !password) {
-            setError('Please enter both email and password.');
+            setError(t('login.error.emailPasswordRequired'));
             return;
         }
         await handleEmailSignIn(auth, email, password);
@@ -42,10 +42,10 @@ export default function LoginPage() {
       router.push('/dashboard');
     } catch (err: any) {
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
-        setError('Incorrect email or password. Please try again or sign up.');
+        setError(t('login.error.invalidCredential'));
         setActiveTab('signup');
       } else {
-        setError('An error occurred during sign-in. Please try again.');
+        setError(t('login.error.signInGeneric'));
       }
     }
   };
@@ -54,19 +54,19 @@ export default function LoginPage() {
     setError(null);
     try {
         if (!email || !password) {
-            setError('Please enter both email and password.');
+            setError(t('login.error.emailPasswordRequired'));
             return;
         }
       await handleEmailSignUp(auth, email, password);
       router.push('/dashboard');
     } catch (err: any) {
       if (err.code === 'auth/email-already-in-use') {
-        setError('An account with this email already exists. Please log in instead.');
+        setError(t('signup.error.emailExists'));
         setActiveTab('login');
       } else if (err.code === 'auth/weak-password') {
-        setError('The password is too weak. Please use at least 6 characters.');
+        setError(t('signup.error.weakPassword'));
       } else {
-        setError('An error occurred during sign-up. Please try again.');
+        setError(t('signup.error.signUpGeneric'));
       }
     }
   };
