@@ -1,5 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -16,10 +19,11 @@ import {
   Lightbulb,
   Refrigerator,
   ShoppingBasket,
+  Loader2,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { DashboardHeader } from '@/components/dashboard/header';
-import { AppProvider } from '@/context/AppContext';
+import { useUser } from '@/firebase';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -34,40 +38,52 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { user, isUserLoading } = useUser();
+
+  if (isUserLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return redirect('/login');
+  }
+
   return (
     <SidebarProvider>
-      <AppProvider>
-        <div className="flex min-h-screen">
-          <Sidebar>
-            <SidebarHeader>
-              <div className="flex items-center gap-2">
-                <Logo className="size-8" />
-                <span className="text-lg font-semibold">Annapourna</span>
-              </div>
-            </SidebarHeader>
-            <SidebarContent>
-              <SidebarMenu>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild tooltip={item.label}>
-                      <Link href={item.href}>
-                        <>
-                          <item.icon />
-                          <span>{item.label}</span>
-                        </>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarContent>
-          </Sidebar>
-          <SidebarInset>
-            <DashboardHeader />
-            <main className="flex-1 p-4 md:p-6">{children}</main>
-          </SidebarInset>
-        </div>
-      </AppProvider>
+      <div className="flex min-h-screen">
+        <Sidebar>
+          <SidebarHeader>
+            <div className="flex items-center gap-2">
+              <Logo className="size-8" />
+              <span className="text-lg font-semibold">Annapourna</span>
+            </div>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton asChild tooltip={item.label}>
+                    <Link href={item.href}>
+                      <>
+                        <item.icon />
+                        <span>{item.label}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+        <SidebarInset>
+          <DashboardHeader />
+          <main className="flex-1 p-4 md:p-6">{children}</main>
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }

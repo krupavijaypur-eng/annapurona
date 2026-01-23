@@ -55,6 +55,10 @@
           "type": "number",
           "description": "Quantity of the food item."
         },
+        "unit": {
+            "type": "string",
+            "description": "Unit of measurement for the quantity (e.g., kg, g, items)."
+        },
         "storageLocation": {
           "type": "string",
           "description": "Location where the item is stored (fridge, freezer, pantry)."
@@ -79,34 +83,8 @@
         "userId",
         "name",
         "quantity",
-        "storageLocation",
-        "expiryDate"
-      ]
-    },
-    "ShoppingList": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "ShoppingList",
-      "type": "object",
-      "description": "Represents a user's shopping list.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the shopping list."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the User who owns this shopping list. (Relationship: User 1:N ShoppingList)"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp indicating when the shopping list was created.",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "createdAt"
+        "unit",
+        "storageLocation"
       ]
     },
     "ShoppingListItem": {
@@ -119,9 +97,9 @@
           "type": "string",
           "description": "Unique identifier for the shopping list item."
         },
-        "shoppingListId": {
+        "userId": {
           "type": "string",
-          "description": "Reference to the ShoppingList this item belongs to. (Relationship: ShoppingList 1:N ShoppingListItem)"
+          "description": "Reference to the User who owns this shopping list item."
         },
         "name": {
           "type": "string",
@@ -131,6 +109,10 @@
           "type": "number",
           "description": "Quantity of the item to buy."
         },
+        "unit": {
+            "type": "string",
+            "description": "Unit of measurement for the quantity (e.g., kg, g, items)."
+        },
         "isPurchased": {
           "type": "boolean",
           "description": "Indicates if the item has been purchased."
@@ -138,9 +120,10 @@
       },
       "required": [
         "id",
-        "shoppingListId",
+        "userId",
         "name",
         "quantity",
+        "unit",
         "isPurchased"
       ]
     },
@@ -203,128 +186,30 @@
   "auth": {
     "providers": [
       "password",
-      "anonymous"
+      "anonymous",
+      "google.com"
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/users/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Stores user profile information. Path-based ownership ensures only the user can access their data.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/inventoryItems/{inventoryItemId}",
-        "definition": {
-          "entityName": "InventoryItem",
-          "schema": {
-            "$ref": "#/backend/entities/InventoryItem"
-          },
-          "description": "Stores inventory items owned by a specific user. Path-based ownership enables simple security rules based on the user ID. Includes the 'userId' to enforce ownership.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "inventoryItemId",
-              "description": "The unique identifier for the inventory item."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/shoppingLists/{shoppingListId}",
-        "definition": {
-          "entityName": "ShoppingList",
-          "schema": {
-            "$ref": "#/backend/entities/ShoppingList"
-          },
-          "description": "Stores shopping lists owned by a specific user. Path-based ownership enables simple security rules based on the user ID. Includes 'userId' to enforce ownership.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "shoppingListId",
-              "description": "The unique identifier for the shopping list."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/shoppingLists/{shoppingListId}/shoppingListItems/{shoppingListItemId}",
-        "definition": {
-          "entityName": "ShoppingListItem",
-          "schema": {
-            "$ref": "#/backend/entities/ShoppingListItem"
-          },
-          "description": "Stores items within a shopping list. Path-based ownership enforces user-specific access control based on the 'userId' and 'shoppingListId'.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "shoppingListId",
-              "description": "The unique identifier for the shopping list."
-            },
-            {
-              "name": "shoppingListItemId",
-              "description": "The unique identifier for the shopping list item."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/wasteReductionTips/{wasteReductionTipId}",
-        "definition": {
-          "entityName": "WasteReductionTip",
-          "schema": {
-            "$ref": "#/backend/entities/WasteReductionTip"
-          },
-          "description": "Stores global waste reduction tips accessible to all users.",
-          "params": [
-            {
-              "name": "wasteReductionTipId",
-              "description": "The unique identifier for the waste reduction tip."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/wasteTipPreferences/{wasteTipPreferenceId}",
-        "definition": {
-          "entityName": "UserWasteTipPreference",
-          "schema": {
-            "$ref": "#/backend/entities/UserWasteTipPreference"
-          },
-          "description": "Stores user-specific preferences for waste reduction tips. Path-based ownership enforces user-specific access control.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "wasteTipPreferenceId",
-              "description": "The unique identifier for the user's waste tip preference."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The Firestore structure is designed to ensure security, scalability, and ease of debugging, following the principles of Authorization Independence, Clarity of Intent, and DBAC. It leverages denormalization and structural segregation to simplify security rules and enable efficient data access. The app implements authentication using 'password' and 'anonymous' methods. User-specific data is stored under the `/users/{userId}` path to ensure private access. Inventory items and shopping lists related to each user are stored as subcollections to maintain a clear ownership hierarchy and support efficient querying. Global waste reduction tips are stored in a separate collection for easy access and management. This structure effectively addresses the requirements for manual inventory entry, barcode/image scanning, expiry date tracking, recipe suggestions, smart shopping list generation, and food waste reduction tips."
+    "/users/{userId}": {
+        "schema": {"$ref": "#/entities/User"},
+        "description": "Stores user profile information."
+    },
+    "/users/{userId}/inventoryItems/{inventoryItemId}": {
+        "schema": {"$ref": "#/entities/InventoryItem"},
+        "description": "Stores inventory items for a specific user."
+    },
+    "/users/{userId}/shoppingListItems/{shoppingListItemId}": {
+        "schema": {"$ref": "#/entities/ShoppingListItem"},
+        "description": "Stores shopping list items for a specific user."
+    },
+    "/wasteReductionTips/{wasteReductionTipId}": {
+        "schema": {"$ref": "#/entities/WasteReductionTip"},
+        "description": "Stores global waste reduction tips."
+    },
+    "/users/{userId}/wasteTipPreferences/{wasteTipPreferenceId}": {
+        "schema": {"$ref": "#/entities/UserWasteTipPreference"},
+        "description": "Stores user preferences for waste reduction tips."
+    }
   }
 }

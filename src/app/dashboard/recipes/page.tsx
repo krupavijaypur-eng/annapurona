@@ -15,15 +15,24 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { suggestRecipes } from '@/ai/flows/recipe-suggestions-based-on-expiry';
-import type { Recipe } from '@/lib/types';
+import type { InventoryItem, Recipe } from '@/lib/types';
 import { ChefHat, Loader2 } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+
 
 export default function RecipesPage() {
-  const { inventory } = useAppContext();
+  const { firestore, user } = useFirebase();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const inventoryQuery = useMemoFirebase(() => {
+    if (!user) return null;
+    return collection(firestore, `users/${user.uid}/inventoryItems`);
+  }, [firestore, user]);
+
+  const { data: inventory } = useCollection<InventoryItem>(inventoryQuery);
 
   const handleGenerateRecipes = async () => {
     setIsLoading(true);
@@ -31,15 +40,15 @@ export default function RecipesPage() {
     setRecipes([]);
 
     try {
-      const ingredients = inventory.map(item => ({
-        name: item.name,
-      }));
-
-      if (ingredients.length === 0) {
+      if (!inventory || inventory.length === 0) {
         setError('Your inventory is empty. Add some items to get recipe suggestions.');
         setIsLoading(false);
         return;
       }
+
+      const ingredients = inventory.map(item => ({
+        name: item.name,
+      }));
 
       const result = await suggestRecipes({ ingredients });
       setRecipes(result.recipes);
@@ -61,7 +70,7 @@ export default function RecipesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={handleGenerateRecipes} disabled={isLoading}>
+          <Button onClick={handleGenerateRecipes} disabled={isLoading || !inventory}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

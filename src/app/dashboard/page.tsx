@@ -4,35 +4,49 @@ import * as React from 'react';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Refrigerator, AlertTriangle, ShoppingBasket } from 'lucide-react';
+import { Refrigerator, AlertTriangle, ShoppingBasket, Loader2 } from 'lucide-react';
 import { ExpiringSoon } from '@/components/dashboard/expiring-soon';
 import { ShoppingListSummary } from '@/components/dashboard/shopping-list-summary';
 import { RecipeSuggestionsCta } from '@/components/dashboard/recipe-suggestions-cta';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAppContext } from '@/context/AppContext';
+import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 import { differenceInDays } from 'date-fns';
+import { InventoryItem, ShoppingListItem } from '@/lib/types';
 
 export default function DashboardPage() {
-    const { inventory, shoppingList, isDataLoaded } = useAppContext();
-    const [expiringCount, setExpiringCount] = React.useState(0);
+    const { firestore, user } = useFirebase();
 
-    React.useEffect(() => {
-        if(isDataLoaded) {
-            const expCount = inventory.filter(item => {
-                if (!item.expiryDate) return false;
-                const daysLeft = differenceInDays(item.expiryDate, new Date());
-                return daysLeft <= 7 && daysLeft >= 0;
-            }).length;
-            setExpiringCount(expCount);
-        }
-    }, [inventory, isDataLoaded]);
+    const inventoryQuery = useMemoFirebase(() => {
+        if (!user) return null;
+        return collection(firestore, `users/${user.uid}/inventoryItems`);
+    }, [firestore, user]);
 
-    const inventoryCount = inventory.length;
-    const shoppingListCount = shoppingList.filter(item => !item.checked).length;
+    const shoppingListQuery = useMemoFirebase(() => {
+        if (!user) return null;
+        // Assuming a single shopping list, we use a subcollection for items
+        return collection(firestore, `users/${user.uid}/shoppingListItems`);
+    }, [firestore, user]);
+
+    const { data: inventory, isLoading: isInventoryLoading } = useCollection<InventoryItem>(inventoryQuery);
+    const { data: shoppingList, isLoading: isShoppingListLoading } = useCollection<ShoppingListItem>(shoppingListQuery);
+    
+    const isDataLoaded = !isInventoryLoading && !isShoppingListLoading;
+
+    const expiringCount = React.useMemo(() => {
+        if (!inventory) return 0;
+        return inventory.filter(item => {
+            if (!item.expiryDate) return false;
+            const daysLeft = differenceInDays(new Date(item.expiryDate), new Date());
+            return daysLeft <= 7 && daysLeft >= 0;
+        }).length;
+    }, [inventory]);
+
+    const inventoryCount = inventory?.length ?? 0;
+    const shoppingListCount = shoppingList?.filter(item => !item.checked).length ?? 0;
 
   if (!isDataLoaded) {
       return (

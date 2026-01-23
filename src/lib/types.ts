@@ -6,8 +6,10 @@ export type InventoryItem = {
   quantity: number;
   unit: string;
   storage: StorageLocation;
+  userId: string;
   imageUrl?: string;
   expiryDate?: Date;
+  createdAt: Date;
 };
 
 export type Recipe = {
@@ -22,4 +24,6 @@ export type ShoppingListItem = {
   quantity: number;
   unit: string;
   checked: boolean;
+  userId: string;
+  createdAt: Date;
 };
