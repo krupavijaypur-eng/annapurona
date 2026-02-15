@@ -106,7 +106,7 @@ export default function ShoppingListPage() {
           <div>
             <CardTitle>Shopping List</CardTitle>
             <CardDescription>
-              Manage your grocery needs. Add new items or check off what you've bought.
+              Manage your grocery needs.
             </CardDescription>
           </div>
           <Button variant="outline" onClick={handleClearChecked} className="mt-4 sm:mt-0" disabled={purchasedItems.length === 0}>
