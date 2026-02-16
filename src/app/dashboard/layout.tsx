@@ -31,7 +31,7 @@ const navItems = [
   { href: '/dashboard/recipes', icon: ChefHat, label: 'Recipes' },
   { href: '/dashboard/shopping-list', icon: ShoppingBasket, label: 'Shopping List' },
   { href: '/dashboard/tips', icon: Lightbulb, label: 'Tips' },
-  { href: '/privacy_policy', icon: ShieldCheck, label: 'Privacy Policy' },
+  { href: '/dashboard/privacy_policy', icon: ShieldCheck, label: 'Privacy Policy' },
 ];
 
 export default function DashboardLayout({
