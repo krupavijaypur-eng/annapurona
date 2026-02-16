@@ -20,6 +20,7 @@ import {
   Refrigerator,
   ShoppingBasket,
   Loader2,
+  ShieldCheck, 
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { DashboardHeader } from '@/components/dashboard/header';
