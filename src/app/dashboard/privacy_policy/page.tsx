@@ -120,6 +120,16 @@ export default function PrivacyPolicyPage() {
               If you have questions regarding this Privacy Policy, please
               contact the project administrator at mknasiruddin.work@gmail.com
             </p>
+            <p>
+              If you have questions regarding this Privacy Policy, please
+              contact the project administrator at{' '}
+              <a
+                href="mailto:mknasiruddin.work@gmail.com"
+                className="text-blue-600 underline hover:text-blue-800"
+              >
+                mknasiruddin.work@gmail.com
+              </a>
+            </p>
           </section>
 
         </CardContent>
