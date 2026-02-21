@@ -118,8 +118,7 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p>
               If you have questions regarding this Privacy Policy, please
-              contact the project administrator through the application
-              repository or support channel.
+              contact the project administrator at mknasiruddin.work@gmail.com
             </p>
           </section>
 
