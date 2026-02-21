@@ -118,10 +118,6 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p>
               If you have questions regarding this Privacy Policy, please
-              contact the project administrator at mknasiruddin.work@gmail.com
-            </p>
-            <p>
-              If you have questions regarding this Privacy Policy, please
               contact the project administrator at{' '}
               <a
                 href="mailto:mknasiruddin.work@gmail.com"
