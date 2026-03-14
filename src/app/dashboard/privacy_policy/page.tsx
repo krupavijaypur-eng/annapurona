@@ -28,7 +28,7 @@ export default function PrivacyPolicyPage() {
           {/* Section 1 */}
           <section>
             <h2 className="font-semibold text-base mb-2">
-              1. Information We Collect
+              1. Information We Collect:
             </h2>
             <p>
               We collect basic user information such as email address and
